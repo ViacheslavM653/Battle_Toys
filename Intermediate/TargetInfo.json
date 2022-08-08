@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "Battle_Toys",
+			"Path": "F:\\Battle_Toys\\Battle_Toys\\Source\\Battle_Toys.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "Battle_ToysEditor",
+			"Path": "F:\\Battle_Toys\\Battle_Toys\\Source\\Battle_ToysEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

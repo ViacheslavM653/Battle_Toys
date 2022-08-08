@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\Battle_Toys.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Battle_Toys.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\Battle_ToysEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\.gitattributes" />
+    <None Include="..\..\.gitignore" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Config\HoloLens">
+      <UniqueIdentifier>{4C8DD267-CDE7-336F-8602-F5F485D22BAB}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\HoloLens\HoloLensEngine.ini">
+      <Filter>Config\HoloLens</Filter>
+    </None>
+    <Filter Include="Source\Battle_Toys">
+      <UniqueIdentifier>{73813E84-50F3-37F4-A869-A74A36424E4B}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Battle_Toys\Battle_Toys.Build.cs">
+      <Filter>Source\Battle_Toys</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\Battle_Toys\Battle_Toys.cpp">
+      <Filter>Source\Battle_Toys</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Battle_Toys\Battle_Toys.h">
+      <Filter>Source\Battle_Toys</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\Battle_Toys\Battle_ToysGameModeBase.cpp">
+      <Filter>Source\Battle_Toys</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Battle_Toys\Battle_ToysGameModeBase.h">
+      <Filter>Source\Battle_Toys</Filter>
+    </ClInclude>
+    <Filter Include="Source\Battle_Toys\Private">
+      <UniqueIdentifier>{73A35E14-A79D-3C3A-9533-6C9BC13A6240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Battle_Toys\Private\BasePawn">
+      <UniqueIdentifier>{65A42F5C-D2BE-3BFE-98EC-3A3BB293DDC0}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Battle_Toys\Private\BasePawn\BasePawn.cpp">
+      <Filter>Source\Battle_Toys\Private\BasePawn</Filter>
+    </ClCompile>
+    <Filter Include="Source\Battle_Toys\Private\BattleToysProjectile">
+      <UniqueIdentifier>{2BF9BF61-5713-3447-8FDA-A81D4F0D37E4}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Battle_Toys\Private\BattleToysProjectile\BattleToysProjectile.cpp">
+      <Filter>Source\Battle_Toys\Private\BattleToysProjectile</Filter>
+    </ClCompile>
+    <Filter Include="Source\Battle_Toys\Public">
+      <UniqueIdentifier>{4E42DB09-D368-3248-A99A-4762B7F0F24A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Battle_Toys\Public\BasePawn">
+      <UniqueIdentifier>{E3EDD529-C0BA-3EB4-A997-F2AC9E781032}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\Battle_Toys\Public\BasePawn\BasePawn.h">
+      <Filter>Source\Battle_Toys\Public\BasePawn</Filter>
+    </ClInclude>
+    <Filter Include="Source\Battle_Toys\Public\BattleToysProjectile">
+      <UniqueIdentifier>{1FAD4224-5A23-39D4-919B-84CA25B3226B}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\Battle_Toys\Public\BattleToysProjectile\BattleToysProjectile.h">
+      <Filter>Source\Battle_Toys\Public\BattleToysProjectile</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "f:\\battle_toys\\battle_toys\\source\\battle_toys\\battle_toys.cpp",
+        "ProvidedModule": "",
+        "PCH": "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\battle_toyseditor\\development\\engine\\sharedpch.engine.shadowerrors.h.pch",
+        "Includes": [
+            "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\unrealeditor\\development\\battle_toys\\definitions.battle_toys.h",
+            "f:\\battle_toys\\battle_toys\\source\\battle_toys\\battle_toys.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
