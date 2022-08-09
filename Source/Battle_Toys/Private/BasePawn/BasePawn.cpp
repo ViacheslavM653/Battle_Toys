@@ -3,6 +3,7 @@
 
 #include "BasePawn/BasePawn.h"
 #include "Kismet/GameplayStatics.h"
+#include "HealthComponent/HealthComponent.h"
 
 // Sets default values
 ABasePawn::ABasePawn()
@@ -10,15 +11,14 @@ ABasePawn::ABasePawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
 }
 
 // Called when the game starts or when spawned
 void ABasePawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CurrentGameMode = UGameplayStatics::GetGameMode(GetWorld());
-	CurrentHealth = MaxHealth;
 	bPawnAlive = true;
 }
 

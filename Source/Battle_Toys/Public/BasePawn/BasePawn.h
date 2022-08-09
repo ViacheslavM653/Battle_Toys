@@ -7,6 +7,7 @@
 #include "BasePawn.generated.h"
 
 class ABattleToysProjectile;
+class UHealthComponent;
 
 UCLASS()
 class BATTLE_TOYS_API ABasePawn : public APawn
@@ -35,15 +36,12 @@ public:
 	bool IsPawnAlive();
 
 private:
-	//Holder CurrentGameMode
-	AGameModeBase* CurrentGameMode;
-	//Value representing the pawn's current health
-	float CurrentHealth;
-
-	UPROPERTY(EditAnywhere, Category = "Health")
-	float MaxHealth = 100.f;
+	
 	// Sratus Pawn: true / false 
 	bool bPawnAlive;
+
+	UPROPERTY(EditAnywhere, Category = "Health")
+	UHealthComponent* HealthComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<ABattleToysProjectile> Projectile;
