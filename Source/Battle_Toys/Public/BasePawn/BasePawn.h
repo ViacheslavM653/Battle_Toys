@@ -30,14 +30,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//Pawn Destruction
 	void HandleDestruction();
-	//Set to: @param bPawnAlive - value "false" 
+	/** Set to: @param bPawnAlive - value "false" */
 	void SetPawnDie();
-	//Get bool value from @param bPawnAlive 
+	/** Get bool value from @param bPawnAlive */
 	bool IsPawnAlive();
 
 private:
 	
-	// Sratus Pawn: true / false 
+	/**Sratus Pawn: true / false */
 	bool bPawnAlive;
 
 	UPROPERTY(EditAnywhere, Category = "Health")

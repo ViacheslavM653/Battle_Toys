@@ -32,10 +32,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	//Holder CurrentGameMode
+	/** Holder CurrentGameMode */
 	ABattleToysGameMode* BattleToysGameMode;
 
-	//Value representing the pawn's current health
+	/** Value representing the pawn's current health */
 	float CurrentHealth;
 
 	UPROPERTY(EditAnywhere, Category = "Health")
