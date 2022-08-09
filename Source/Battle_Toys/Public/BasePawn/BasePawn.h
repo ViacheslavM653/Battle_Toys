@@ -22,6 +22,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<ABattleToysProjectile> ProjectileClass;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,9 +45,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	UHealthComponent* HealthComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<ABattleToysProjectile> Projectile;
 
 	UPROPERTY(EditAnywhere, Category = "Death")
 	UParticleSystem* DeathParticles;
