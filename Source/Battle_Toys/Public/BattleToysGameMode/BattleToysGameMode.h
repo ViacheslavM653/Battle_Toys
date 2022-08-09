@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "BatlleToysGameMode.generated.h"
+#include "BattleToysGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BATTLE_TOYS_API ABatlleToysGameMode : public AGameModeBase
+class BATTLE_TOYS_API ABattleToysGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	

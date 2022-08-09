@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BatlleToysGameMode/BatlleToysGameMode.h"
 #include "HealthComponent.generated.h"
 
-
+class ABattleToysGameMode;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -34,7 +33,7 @@ public:
 
 private:
 	//Holder CurrentGameMode
-	ABatlleToysGameMode* BatlleToysGameMode;
+	ABattleToysGameMode* BattleToysGameMode;
 
 	//Value representing the pawn's current health
 	float CurrentHealth;

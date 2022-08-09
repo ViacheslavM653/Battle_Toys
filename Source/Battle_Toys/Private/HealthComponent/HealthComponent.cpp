@@ -3,6 +3,7 @@
 
 #include "HealthComponent/HealthComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "BattleToysGameMode/BattleToysGameMode.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -33,9 +34,10 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BatlleToysGameMode = Cast<ABatlleToysGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	BattleToysGameMode = Cast<ABattleToysGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	CurrentHealth = MaxHealth;
-	// ...
+
 	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::DamageTaken);
 ;
 }
@@ -63,9 +65,9 @@ void UHealthComponent::DamageTaken(
 
 	CurrentHealth -= Damage;
 	UE_LOG(LogTemp, Warning, TEXT("CurrentHealth: %f"), CurrentHealth);
-	if (CurrentHealth <= 0.f && BatlleToysGameMode)
+	if (CurrentHealth <= 0.f && BattleToysGameMode)
 	{
-		BatlleToysGameMode->ActorDied(DamagedActor);
+		BattleToysGameMode->ActorDied(DamagedActor);
 	}
 }
 
