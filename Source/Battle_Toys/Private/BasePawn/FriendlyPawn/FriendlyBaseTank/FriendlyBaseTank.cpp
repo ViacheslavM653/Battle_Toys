@@ -35,5 +35,6 @@ void AFriendlyBaseTank::Fire()
 
 	ABattleToysProjectile* Projectile = GetWorld()->SpawnActor<ABattleToysProjectile>(ABasePawn::ProjectileClass, Location, Rotation);
 	Projectile->SetOwner(this);
+	
 }
 

@@ -17,6 +17,21 @@ class BATTLE_TOYS_API ABasePawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ABasePawn();
+	/** Triger for UHealthComponent->AddHealthFromUpgrade(float HealingValue) */
+	virtual void AddHealthFromUpgrade(float HealingValue);
+	/**Get float value ProjectileDamage */
+	float GetProjectileDamage();
+	/**Get float value ProjectileSpeed */
+	float GetProjectileSpeed();
+	/** Update float  value ProjectileDamage 
+	*Multiple ProjectileDamage by UpgradeProjectileDamageMultiplier
+	*/
+	virtual void SetUpgradeForProjectileDamage(float UpgradeProjectileDamageMultiplier);
+	/** Update float  value ProjectileSpeed
+	*Multiple ProjectileSpeed by UpgradeProjectileSpeedMultiplier
+	*/
+	virtual void SetUpgradeForProjectileSpeed(float UpgradeProjectileSpeedMultiplier);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,6 +57,14 @@ private:
 	
 	/**Sratus Pawn: true / false */
 	bool bPawnAlive;
+	
+	
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	float ProjectileDamage = 30.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	float ProjectileSpeed = 1300.f;
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	UHealthComponent* HealthComponent;

@@ -7,6 +7,7 @@
 #include "GameFramework/DamageType.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "BasePawn/BasePawn.h"
 
 // Sets default values
 ABattleToysProjectile::ABattleToysProjectile()
@@ -24,29 +25,20 @@ ABattleToysProjectile::ABattleToysProjectile()
 	TrailParticles->SetupAttachment(RootComponent);
 }
 
-void ABattleToysProjectile::SetUpgradeForDamage(float UpgradeProjectileDamageMultiplier)
-{
-	if (UpgradeProjectileDamageMultiplier && UpgradeProjectileDamageMultiplier >= 1)
-	{
-		Damage *= UpgradeProjectileDamageMultiplier;
-	}
-	
-}
 
-void ABattleToysProjectile::SetUpgradeForSpeed(float UpgradeProjectileSpeedMultiplier)
-{
-	if (UpgradeProjectileSpeedMultiplier && UpgradeProjectileSpeedMultiplier > 0.f)
-	{
-		ProjectileMovementComponent->MaxSpeed = ProjectileMovementComponent->MaxSpeed * UpgradeProjectileSpeedMultiplier;
-		ProjectileMovementComponent->InitialSpeed = ProjectileMovementComponent->InitialSpeed * UpgradeProjectileSpeedMultiplier;
-	}
-}
 
 // Called when the game starts or when spawned
 void ABattleToysProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	// Get ProjectileDamage, ProjectileSpeed and setup for Projectile
+
+	ABasePawn* ProjectileOwner = Cast<ABasePawn>(GetOwner());
+	Damage = ProjectileOwner->GetProjectileDamage();
+	float ProjectileSpeed = ProjectileOwner->GetProjectileSpeed();
+	ProjectileMovementComponent->MaxSpeed = ProjectileSpeed;
+	ProjectileMovementComponent->InitialSpeed = ProjectileSpeed;
+
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &ABattleToysProjectile::OnHit);
 
 	if (LaunchSound)

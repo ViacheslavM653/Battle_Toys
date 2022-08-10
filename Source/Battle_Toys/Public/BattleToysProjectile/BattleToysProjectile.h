@@ -17,10 +17,7 @@ public:
 	
 	// Sets default values for this actor's properties
 	ABattleToysProjectile();
-	/** Multiply Damage value by UpgradeProjectileDamageMultiplier */
-	void SetUpgradeForDamage(float UpgradeProjectileDamageMultiplier);
-	/** Multiply ProjectileMovementComponent->MaxSpeedand ProjectileMovementComponent->InitialSpeed by UpgradeProjectileSpeedMultiplier */
-	void SetUpgradeForSpeed(float UpgradeProjectileSpeedMultiplier);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,6 +28,7 @@ public:
 
 private:
 
+	
 	UPROPERTY(
 		VisibleAnywhere,
 		BlueprintReadOnly,
@@ -56,14 +54,7 @@ private:
 			const FHitResult& Hit
 		);
 
-
-	UPROPERTY(
-		EditAnywhere,
-		BlueprintReadOnly,
-		Category = "Combat",
-		meta = (AllowPrivateAccess = "true")
-	)
-	float Damage = 20.f;
+	float Damage = 0.f;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	class UParticleSystem* HitParticles;
