@@ -47,7 +47,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+	/** Funcrion for rotation Tank Hull by terain */
+	virtual void SetupTankOnGround();
 	
 	/** Spawn Projectile and Produce Shot  */
 	void Fire();
@@ -55,13 +56,35 @@ protected:
 private:
 	/**Calculated Position for Tank by tracing ground */
 	void SetTankPositionByTerrain();
+	/** AsyncLineTraceByChannel by Visibility
+	* @param StartLocation - Location form start tracing;
+	* @param DepthTracingValue - depth value. */
+	FHitResult GetTracingResultByVisibility(FVector &StartLocation, float &DepthTracingValue);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Component", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* CapsuleComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Pivot", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* TankPivot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank ForwardRightWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* ForwardRightWheelSensor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank ForwardLeftWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* ForwardLeftWheelSensor;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Forward WheelsEnd Sensor ", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* ForwardWheelsEndSensor;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank BackwardRightWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* BackwardRightWheelSensor;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank BackwardLeftWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* BackwardLeftWheelSensor;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Backward WheelsEnd Sensor ", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* BackwardWheelsEndSensor;
+
 	UPROPERTY(EditAnywhere, Category = "Tank Mesh")
 	USkeletalMeshComponent* TankHullSkeletalMesh;
 
