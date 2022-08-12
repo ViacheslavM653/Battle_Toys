@@ -23,17 +23,13 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 
 	TankPivot->SetupAttachment(CapsuleComponent);
 	ForwardRightWheelSensor = CreateDefaultSubobject<USceneComponent>(TEXT("ForwardRight Wheel Sensor"));
-	ForwardRightWheelSensor->SetupAttachment(TankPivot);
+	ForwardRightWheelSensor->SetupAttachment(CapsuleComponent);
 	ForwardLeftWheelSensor = CreateDefaultSubobject<USceneComponent>(TEXT("ForwardLeft Wheel Sensor"));
-	ForwardLeftWheelSensor->SetupAttachment(TankPivot);
-	ForwardWheelsEndSensor = CreateDefaultSubobject<USceneComponent>(TEXT("Forward Wheels End Sensor"));
-	ForwardWheelsEndSensor->SetupAttachment(TankPivot);
+	ForwardLeftWheelSensor->SetupAttachment(CapsuleComponent);
 	BackwardRightWheelSensor = CreateDefaultSubobject<USceneComponent>(TEXT("BackwardRight Wheel Sensor"));
-	BackwardRightWheelSensor->SetupAttachment(TankPivot);
+	BackwardRightWheelSensor->SetupAttachment(CapsuleComponent);
 	BackwardLeftWheelSensor = CreateDefaultSubobject<USceneComponent>(TEXT("BackwardLeft Wheel Sensor"));
-	BackwardLeftWheelSensor->SetupAttachment(TankPivot);
-	BackwardWheelsEndSensor = CreateDefaultSubobject<USceneComponent>(TEXT("Backward Wheels End Sensor"));
-	BackwardWheelsEndSensor->SetupAttachment(TankPivot);
+	BackwardLeftWheelSensor->SetupAttachment(CapsuleComponent);
 
 	TankHullSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Tank Hull SkeletalMesh"));
 	TankHullSkeletalMesh->SetupAttachment(TankPivot);
@@ -80,16 +76,13 @@ void AFriendlyBaseTank::Move(float AxisValue)
 FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 {
 	//Tracing to ground
-	FHitResult OutHit;
+	
 	FVector Start = TankPivot->GetComponentLocation();
-	FVector DeltaLength = FVector::ZeroVector;
-	DeltaLength.Z = -100;
-	FVector End = Start + DeltaLength;
+	float DepthTracingValue = 100;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
-	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
-
+	FHitResult OutHit = GetTracingResultByVisibility(Start, DepthTracingValue);
+	
 	//Find Ground Point
 	FVector HitPoint = OutHit.ImpactPoint;
 
@@ -107,9 +100,9 @@ FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 	if (DirectionVectorAbsolute.Z != 0 && HitDistance != 0)
 	{
 		float MaximumCompensation = (0.98 - DirectionVectorAbsolute.Z);
-		UE_LOG(LogTemp, Warning, TEXT("MaximumCompensation: %f"), MaximumCompensation);
-		float CorrectionValue = (HitDistance / -DeltaLength.Z) * MaximumCompensation;
-		UE_LOG(LogTemp, Warning, TEXT("CorrectionValue: %f"), CorrectionValue);
+		//UE_LOG(LogTemp, Warning, TEXT("MaximumCompensation: %f"), MaximumCompensation);
+		float CorrectionValue = (HitDistance / DepthTracingValue) * MaximumCompensation;
+		//UE_LOG(LogTemp, Warning, TEXT("CorrectionValue: %f"), CorrectionValue);
 		if (AxisValue > 0)
 		{
 			DirectionVector.Z = DirectionVector.Z - CorrectionValue;
@@ -142,13 +135,27 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 
 void AFriendlyBaseTank::SetupTankOnGround()
 {
-	float DepthTracingValue = 100.f;
-	//Create first Triangle polygon and trace  point Capsule Location on them
+	float DepthTracingValue = 300.f;
+	FVector XZPlaneNormal = GetActorRightVector();
+	//Caclulate Traceing Data
 	FVector ForwardRightWheelSensorLocation = ForwardRightWheelSensor->GetComponentLocation();
 	FHitResult  ForwardRightWheelSensorOutHit = GetTracingResultByVisibility(
 		ForwardRightWheelSensorLocation, 
 		DepthTracingValue
 	);
+	/*----------------------Prototype-------------------------------*/
+	//Progect ForwardRightWheelSensorOutHit.IpactNormal to XZ Plane
+	FVector ForwardRightWheelSensorNormalToXZ = FVector::VectorPlaneProject(ForwardRightWheelSensorOutHit.ImpactNormal, XZPlaneNormal);
+	FVector ForwardRightWheelSensorCrossToRightVector = ForwardRightWheelSensorNormalToXZ.Cross(-XZPlaneNormal);
+	UE_LOG(LogTemp, Warning, TEXT("ForwardRightWheelSensorCrossToRightVector.Rotation(): %s"), *ForwardRightWheelSensorCrossToRightVector.Rotation().ToString());
+	FRotator TestPitchRotator = ForwardRightWheelSensorCrossToRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Pitch = TestPitchRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+	UE_LOG(LogTemp, Warning, TEXT("FinalRotator: %s"), *FinalRotator.ToString());
+	/*----------------------Prototype END------------------------------*/
+	TankPivot->SetRelativeRotation(FinalRotator.Quaternion(),true);
+
 	FVector ForwardLeftWheelSensorLocation = ForwardLeftWheelSensor->GetComponentLocation();
 	FHitResult  ForwardLeftWheelSensorOutHit = GetTracingResultByVisibility(
 		ForwardLeftWheelSensorLocation,
@@ -165,9 +172,16 @@ void AFriendlyBaseTank::SetupTankOnGround()
 		DepthTracingValue
 	);
 
-	/*DrawDebugSphere(GetWorld(), ForwardRightWheelSensorOutHit.ImpactPoint, 10.f, 12, FColor::Red);
-	DrawDebugSphere(GetWorld(), ForwardLeftWheelSensorOutHit.ImpactPoint, 10.f, 12, FColor::Green);
-	DrawDebugSphere(GetWorld(), ForwardWheelsEndSensorOutHit.ImpactPoint, 10.f, 12, FColor::Blue);*/
+	// Visualization Search Vector 
+	DrawDebugCoordinateSystem(
+		GetWorld(),
+		TankPivot->GetComponentLocation(),
+		ActorRotation,
+		200.f
+	);
+
+
+	// Visualization Tracin Data
 	DrawDebugCoordinateSystem(
 		GetWorld(), 
 		ForwardRightWheelSensorOutHit.ImpactPoint,
@@ -197,21 +211,15 @@ void AFriendlyBaseTank::SetupTankOnGround()
 	);
 	//UE_LOG(LogTemp, Warning, TEXT("BackwardLeftWheelSensorOutHit.ImpactNormal.X: %f"), BackwardLeftWheelSensorOutHit.ImpactNormal.X);
 
-	FVector Normal = FVector::PointPlaneProject(
-		CapsuleComponent->GetComponentLocation(),
-		ForwardRightWheelSensorOutHit.ImpactPoint,
-		ForwardLeftWheelSensorOutHit.ImpactPoint,
-		BackwardLeftWheelSensorOutHit.ImpactPoint
-		);
-	
+
 	
 
-	DrawDebugCoordinateSystem(
+	/*DrawDebugCoordinateSystem(
 		GetWorld(),
 		Normal,
 		Normal.Rotation(),
 		200.f
-	);
+	);*/
 	
 	//UE_LOG(LogTemp, Warning, TEXT("HitActor: "));
 	
@@ -251,7 +259,7 @@ void AFriendlyBaseTank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	//SetupTankOnGround();
+	SetupTankOnGround();
 }
 
 void AFriendlyBaseTank::BeginPlay()

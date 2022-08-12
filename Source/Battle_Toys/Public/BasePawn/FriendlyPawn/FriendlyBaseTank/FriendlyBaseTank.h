@@ -72,18 +72,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank ForwardLeftWheel Sensor ", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ForwardLeftWheelSensor;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Forward WheelsEnd Sensor ", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* ForwardWheelsEndSensor;
-	
+			
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank BackwardRightWheel Sensor ", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* BackwardRightWheelSensor;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank BackwardLeftWheel Sensor ", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* BackwardLeftWheelSensor;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Backward WheelsEnd Sensor ", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* BackwardWheelsEndSensor;
 
 	UPROPERTY(EditAnywhere, Category = "Tank Mesh")
 	USkeletalMeshComponent* TankHullSkeletalMesh;
