@@ -136,26 +136,36 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 void AFriendlyBaseTank::SetupTankOnGround()
 {
 	float DepthTracingValue = 300.f;
-	FVector XZPlaneNormal = GetActorRightVector();
+	
 	//Caclulate Traceing Data
 	FVector ForwardRightWheelSensorLocation = ForwardRightWheelSensor->GetComponentLocation();
 	FHitResult  ForwardRightWheelSensorOutHit = GetTracingResultByVisibility(
 		ForwardRightWheelSensorLocation, 
 		DepthTracingValue
 	);
+
+
 	/*----------------------Prototype-------------------------------*/
 	//Progect ForwardRightWheelSensorOutHit.IpactNormal to XZ Plane
-	FVector ForwardRightWheelSensorNormalToXZ = FVector::VectorPlaneProject(ForwardRightWheelSensorOutHit.ImpactNormal, XZPlaneNormal);
-	FVector ForwardRightWheelSensorCrossToRightVector = ForwardRightWheelSensorNormalToXZ.Cross(-XZPlaneNormal);
-	UE_LOG(LogTemp, Warning, TEXT("ForwardRightWheelSensorCrossToRightVector.Rotation(): %s"), *ForwardRightWheelSensorCrossToRightVector.Rotation().ToString());
-	FRotator TestPitchRotator = ForwardRightWheelSensorCrossToRightVector.Rotation();
-	FRotator ActorRotation = GetActorRotation();
-	ActorRotation.Pitch = TestPitchRotator.Pitch;
-	FRotator FinalRotator = ActorRotation - GetActorRotation();
-	UE_LOG(LogTemp, Warning, TEXT("FinalRotator: %s"), *FinalRotator.ToString());
-	/*----------------------Prototype END------------------------------*/
-	TankPivot->SetRelativeRotation(FinalRotator.Quaternion(),true);
 
+	//FVector XZPlaneNormal = GetActorRightVector();
+	//FVector ForwardRightWheelSensorNormalToXZ = FVector::VectorPlaneProject(ForwardRightWheelSensorOutHit.ImpactNormal, XZPlaneNormal);
+	//FVector ForwardRightWheelSensorCrossToRightVector = ForwardRightWheelSensorNormalToXZ.Cross(-XZPlaneNormal);
+	//UE_LOG(LogTemp, Warning, TEXT("ForwardRightWheelSensorCrossToRightVector.Rotation(): %s"), *ForwardRightWheelSensorCrossToRightVector.Rotation().ToString());
+	//FRotator TestPitchRotator = ForwardRightWheelSensorCrossToRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Pitch = GetPitchFromHitNormal(ForwardRightWheelSensorOutHit);
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+	// Round to 2 sign affter koma
+
+	//float Rounded = FMath::RoundToInt(ActorRotation.Pitch * 100);
+	//FinalRotator.Pitch = Rounded / 100;
+
+	UE_LOG(LogTemp, Warning, TEXT("FinalRotator: %s"), *FinalRotator.ToString());
+
+	
+	TankPivot->SetRelativeRotation(FinalRotator.Quaternion(),true);
+	/*----------------------Prototype END------------------------------*/
 	FVector ForwardLeftWheelSensorLocation = ForwardLeftWheelSensor->GetComponentLocation();
 	FHitResult  ForwardLeftWheelSensorOutHit = GetTracingResultByVisibility(
 		ForwardLeftWheelSensorLocation,
@@ -241,6 +251,19 @@ FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector &StartLocatio
 	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
 
 	return OutHit;
+}
+
+float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
+{
+	FVector XZPlaneNormal = GetActorRightVector();
+	FVector SensorNormalToXZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, XZPlaneNormal);
+	FVector SensorNormalToXZCrossVsRightVector = SensorNormalToXZ.Cross(-XZPlaneNormal);
+	FRotator CrossRezultRotator = SensorNormalToXZCrossVsRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Pitch = CrossRezultRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+
+	return FinalRotator.Pitch;
 }
 void AFriendlyBaseTank::Fire()
 {

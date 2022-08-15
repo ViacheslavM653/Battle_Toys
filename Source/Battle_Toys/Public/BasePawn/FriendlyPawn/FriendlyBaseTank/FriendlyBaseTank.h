@@ -56,6 +56,10 @@ protected:
 private:
 	/**Calculated Position for Tank by tracing ground */
 	void SetTankPositionByTerrain();
+	/** Calculate Pitch value from HitResult relative ActorRotation
+	* @param HitResult - TracingResult.
+	*/
+	float GetPitchFromHitNormal(FHitResult &HitResult);
 	/** AsyncLineTraceByChannel by Visibility
 	* @param StartLocation - Location form start tracing;
 	* @param DepthTracingValue - depth value. */
