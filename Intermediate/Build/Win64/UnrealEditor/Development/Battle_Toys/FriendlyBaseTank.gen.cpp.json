@@ -1,0 +1,19 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\unrealeditor\\inc\\battle_toys\\friendlybasetank.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\battle_toyseditor\\development\\engine\\sharedpch.engine.shadowerrors.h.pch",
+        "Includes": [
+            "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\unrealeditor\\development\\battle_toys\\definitions.battle_toys.h",
+            "f:\\battle_toys\\battle_toys\\source\\battle_toys\\public\\basepawn\\friendlypawn\\friendlybasetank\\friendlybasetank.h",
+            "f:\\battle_toys\\battle_toys\\source\\battle_toys\\public\\basepawn\\friendlypawn\\friendlypawn.h",
+            "f:\\battle_toys\\battle_toys\\source\\battle_toys\\public\\basepawn\\basepawn.h",
+            "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\unrealeditor\\inc\\battle_toys\\basepawn.generated.h",
+            "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\unrealeditor\\inc\\battle_toys\\friendlypawn.generated.h",
+            "f:\\battle_toys\\battle_toys\\intermediate\\build\\win64\\unrealeditor\\inc\\battle_toys\\friendlybasetank.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
