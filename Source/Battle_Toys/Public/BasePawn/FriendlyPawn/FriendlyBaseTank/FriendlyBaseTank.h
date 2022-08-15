@@ -60,10 +60,6 @@ private:
 	* @param HitResult - TracingResult.
 	*/
 	float GetPitchFromHitNormal(FHitResult &HitResult);
-	/** Calculate Roll value from HitResult relative ActorRotation
-	* @param HitResult - TracingResult.
-	*/
-	float GetRollFromHitNormal(FHitResult &HitResult);
 	/** AsyncLineTraceByChannel by Visibility
 	* @param StartLocation - Location form start tracing;
 	* @param DepthTracingValue - depth value. */
