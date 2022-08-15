@@ -70,19 +70,19 @@ void AFriendlyBaseTank::Move(float AxisValue)
 {
 
 	AddMovementInput(FindMovementInputVector(AxisValue) * AxisValue);
-	
+
 }
 
 FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 {
 	//Tracing to ground
-	
+
 	FVector Start = TankPivot->GetComponentLocation();
 	float DepthTracingValue = 100;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	FHitResult OutHit = GetTracingResultByVisibility(Start, DepthTracingValue);
-	
+
 	//Find Ground Point
 	FVector HitPoint = OutHit.ImpactPoint;
 
@@ -90,7 +90,7 @@ FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 	FVector ActorForwardVector = GetActorForwardVector();
 	FVector ProjectionNormal = GetActorRightVector();
 	FVector ProjectedHitNormal = FVector::VectorPlaneProject(OutHit.ImpactNormal, ProjectionNormal);
-	FVector DirectionVector = ProjectedHitNormal.Cross( - ProjectionNormal);
+	FVector DirectionVector = ProjectedHitNormal.Cross(-ProjectionNormal);
 
 	//Prepare CorrectionValue for DirectionVector
 	FVector TankPivotLocation = TankPivot->GetComponentLocation();
@@ -111,9 +111,9 @@ FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 		{
 			DirectionVector.Z = DirectionVector.Z + CorrectionValue;
 		}
-	
+
 	}
-	
+
 	FVector MovementInputVector = DirectionVector;
 	return MovementInputVector;
 }
@@ -123,7 +123,7 @@ FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 void AFriendlyBaseTank::Turn(float AxisValue)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("TurnRight Axis Value: %f"), AxisValue);
-	
+
 	FRotator DeltaRotation = FRotator::ZeroRotator;
 	// Yaw = Value * DeltaTime * TurnRate;
 	float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
@@ -136,108 +136,71 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 void AFriendlyBaseTank::SetupTankOnGround()
 {
 	float DepthTracingValue = 300.f;
-	
+	FRotator ActorRotation = GetActorRotation();
+
 	//Caclulate Traceing Data
 	FVector ForwardRightWheelSensorLocation = ForwardRightWheelSensor->GetComponentLocation();
 	FHitResult  ForwardRightWheelSensorOutHit = GetTracingResultByVisibility(
-		ForwardRightWheelSensorLocation, 
+		ForwardRightWheelSensorLocation,
 		DepthTracingValue
 	);
 
+	float ForwardRightWheelSensorPitch = GetPitchFromHitNormal(ForwardRightWheelSensorOutHit);
+	float ForwardRightWheelSensorRoll = GetRollFromHitNormal(ForwardRightWheelSensorOutHit);
 
-	/*----------------------Prototype-------------------------------*/
-	//Progect ForwardRightWheelSensorOutHit.IpactNormal to XZ Plane
 
-	//FVector XZPlaneNormal = GetActorRightVector();
-	//FVector ForwardRightWheelSensorNormalToXZ = FVector::VectorPlaneProject(ForwardRightWheelSensorOutHit.ImpactNormal, XZPlaneNormal);
-	//FVector ForwardRightWheelSensorCrossToRightVector = ForwardRightWheelSensorNormalToXZ.Cross(-XZPlaneNormal);
-	//UE_LOG(LogTemp, Warning, TEXT("ForwardRightWheelSensorCrossToRightVector.Rotation(): %s"), *ForwardRightWheelSensorCrossToRightVector.Rotation().ToString());
-	//FRotator TestPitchRotator = ForwardRightWheelSensorCrossToRightVector.Rotation();
-	FRotator ActorRotation = GetActorRotation();
-	ActorRotation.Pitch = GetPitchFromHitNormal(ForwardRightWheelSensorOutHit);
-	FRotator FinalRotator = ActorRotation - GetActorRotation();
-	// Round to 2 sign affter koma
-
-	//float Rounded = FMath::RoundToInt(ActorRotation.Pitch * 100);
-	//FinalRotator.Pitch = Rounded / 100;
-
-	UE_LOG(LogTemp, Warning, TEXT("FinalRotator: %s"), *FinalRotator.ToString());
-
-	
-	TankPivot->SetRelativeRotation(FinalRotator.Quaternion(),true);
-	/*----------------------Prototype END------------------------------*/
 	FVector ForwardLeftWheelSensorLocation = ForwardLeftWheelSensor->GetComponentLocation();
 	FHitResult  ForwardLeftWheelSensorOutHit = GetTracingResultByVisibility(
 		ForwardLeftWheelSensorLocation,
 		DepthTracingValue
 	);
+
+	float ForwardLeftWheelSensorPitch = GetPitchFromHitNormal(ForwardLeftWheelSensorOutHit);
+	float ForwardLeftWheelSensorRoll = GetRollFromHitNormal(ForwardLeftWheelSensorOutHit);
+
 	FVector BackwardRightWheelSensorLocation = BackwardRightWheelSensor->GetComponentLocation();
 	FHitResult  BackwardRightWheelSensorOutHit = GetTracingResultByVisibility(
 		BackwardRightWheelSensorLocation,
 		DepthTracingValue
 	);
+
+	float BackwardRightWheelSensorPitch = GetPitchFromHitNormal(BackwardRightWheelSensorOutHit);
+	float BackwardRightWheelSensorRoll = GetRollFromHitNormal(BackwardRightWheelSensorOutHit);
+
 	FVector BackwardLeftWheelSensorLocation = BackwardLeftWheelSensor->GetComponentLocation();
 	FHitResult  BackwardLeftWheelSensorOutHit = GetTracingResultByVisibility(
 		BackwardLeftWheelSensorLocation,
 		DepthTracingValue
 	);
 
-	// Visualization Search Vector 
-	DrawDebugCoordinateSystem(
-		GetWorld(),
-		TankPivot->GetComponentLocation(),
-		ActorRotation,
-		200.f
-	);
+	float BackwardLeftWheelSensorPitch = GetPitchFromHitNormal(BackwardLeftWheelSensorOutHit);
+	float BackwardLeftWheelSensorRoll = GetRollFromHitNormal(BackwardLeftWheelSensorOutHit);
+
+	//Get average Pitch
+	float AveragePitch =
+		(ForwardRightWheelSensorPitch +
+			ForwardLeftWheelSensorPitch +
+			BackwardRightWheelSensorPitch +
+			BackwardLeftWheelSensorPitch) / 4
+		;
+	//Get average Roll
+	float AverageRoll =
+		(ForwardRightWheelSensorRoll +
+			ForwardLeftWheelSensorRoll +
+			BackwardRightWheelSensorRoll +
+			BackwardLeftWheelSensorRoll) / 4
+		;
+
+	FRotator FinalRotator = ActorRotation;
+	ActorRotation.Pitch = ActorRotation.Pitch + AveragePitch;
+	ActorRotation.Roll = ActorRotation.Roll + AverageRoll;
+	FinalRotator = ActorRotation - GetActorRotation();
 
 
-	// Visualization Tracin Data
-	DrawDebugCoordinateSystem(
-		GetWorld(), 
-		ForwardRightWheelSensorOutHit.ImpactPoint,
-		ForwardRightWheelSensorOutHit.ImpactNormal.Rotation(),
-		70.f
-	);
-	//UE_LOG(LogTemp, Warning, TEXT("ForwardRightWheelSensorOutHit.ImpactNormal.X: %f"), ForwardRightWheelSensorOutHit.ImpactNormal.X);
-	DrawDebugCoordinateSystem(
-		GetWorld(), 
-		ForwardLeftWheelSensorOutHit.ImpactPoint,
-		ForwardLeftWheelSensorOutHit.ImpactNormal.Rotation(),
-		70.f
-	);
-	//UE_LOG(LogTemp, Warning, TEXT("ForwardLeftWheelSensorOutHit.ImpactNormal.X: %f"), ForwardLeftWheelSensorOutHit.ImpactNormal.X);
-	DrawDebugCoordinateSystem(
-		GetWorld(), 
-		BackwardRightWheelSensorOutHit.ImpactPoint,
-		BackwardRightWheelSensorOutHit.ImpactNormal.Rotation(),
-		70.f
-	);
-	//UE_LOG(LogTemp, Warning, TEXT("BackwardRightWheelSensorOutHit.ImpactNormal.X: %f"), BackwardRightWheelSensorOutHit.ImpactNormal.X);
-	DrawDebugCoordinateSystem(
-		GetWorld(), 
-		BackwardLeftWheelSensorOutHit.ImpactPoint,
-		BackwardLeftWheelSensorOutHit.ImpactNormal.Rotation(),
-		70.f
-	);
-	//UE_LOG(LogTemp, Warning, TEXT("BackwardLeftWheelSensorOutHit.ImpactNormal.X: %f"), BackwardLeftWheelSensorOutHit.ImpactNormal.X);
-
-
-	
-
-	/*DrawDebugCoordinateSystem(
-		GetWorld(),
-		Normal,
-		Normal.Rotation(),
-		200.f
-	);*/
-	
-	//UE_LOG(LogTemp, Warning, TEXT("HitActor: "));
-	
-
-	
+	TankPivot->SetRelativeRotation(FinalRotator.Quaternion(), true);
 }
 
-FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector &StartLocation, float &DepthTracingValue)
+FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
 {
 	FHitResult OutHit;
 	FVector Start = StartLocation;
@@ -265,6 +228,20 @@ float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
 
 	return FinalRotator.Pitch;
 }
+
+float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
+{
+	FVector YZPlaneNormal = GetActorForwardVector();
+	FVector SensorNormalToYZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, YZPlaneNormal);
+	FVector SensorNormalToYZCrossVsRightVector = SensorNormalToYZ.Cross(-YZPlaneNormal);
+	FRotator CrossRezultRotator = SensorNormalToYZCrossVsRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Roll = CrossRezultRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+
+	return FinalRotator.Roll;
+}
+
 void AFriendlyBaseTank::Fire()
 {
 	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
@@ -274,14 +251,14 @@ void AFriendlyBaseTank::Fire()
 		ABattleToysProjectile* Projectile = GetWorld()->SpawnActor<ABattleToysProjectile>(ABasePawn::ProjectileClass, Location, Rotation);
 		Projectile->SetOwner(this);
 	}
-	
-	
+
+
 }
 
 void AFriendlyBaseTank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	SetupTankOnGround();
 }
 
@@ -317,8 +294,8 @@ void AFriendlyBaseTank::SetTankPositionByTerrain()
 	//DeltaLocationOffset.Z = DeltaLocationOffset.Z + (TankPivotLocation.Z - HitPoint.Z);
 
 	//AddActorLocalOffset(DeltaLocationOffset, true);
-	
-	
-	
+
+
+
 }
 
