@@ -136,7 +136,6 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 void AFriendlyBaseTank::SetupTankOnGround()
 {
 	float DepthTracingValue = 300.f;
-	FRotator ActorRotation = GetActorRotation();
 
 	//Caclulate Traceing Data
 	FVector ForwardRightWheelSensorLocation = ForwardRightWheelSensor->GetComponentLocation();
@@ -191,13 +190,17 @@ void AFriendlyBaseTank::SetupTankOnGround()
 			BackwardLeftWheelSensorRoll) / 4
 		;
 
-	FRotator FinalRotator = ActorRotation;
-	ActorRotation.Pitch = ActorRotation.Pitch + AveragePitch;
-	ActorRotation.Roll = ActorRotation.Roll + AverageRoll;
-	FinalRotator = ActorRotation - GetActorRotation();
+	FRotator TargetRotator = GetActorRotation();
+	float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
+	float CorrectorFPS = (0.5 / DeltaTime) * DeltaTime;
 
-
-	TankPivot->SetRelativeRotation(FinalRotator.Quaternion(), true);
+	
+	TargetRotator.Pitch = TargetRotator.Pitch + AveragePitch;// * CorrectorFPS;
+	TargetRotator.Roll = TargetRotator.Roll + AverageRoll; // *CorrectorFPS;
+	FRotator DirectRotator = TargetRotator - GetActorRotation();
+	
+	//Direct rotate TankPivot
+	TankPivot->SetRelativeRotation(DirectRotator.Quaternion());
 }
 
 FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
