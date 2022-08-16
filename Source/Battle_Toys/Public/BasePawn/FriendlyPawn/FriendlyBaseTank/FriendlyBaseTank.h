@@ -52,11 +52,7 @@ protected:
 
     /** Spawn Projectile and Produce Shot  */
     void Fire();
-
-    /** If an EnemyPawn is found - rotate TankTower to the Enemy location
-    * @param LookAtTarget - Enemy location
-    */
-    virtual void RotateTankTowerToEnemy(FVector& LookAtTarget);
+       
     /**  TankTower follow to the Enemy
     * @param LookAtTarget - Enemy location
     */

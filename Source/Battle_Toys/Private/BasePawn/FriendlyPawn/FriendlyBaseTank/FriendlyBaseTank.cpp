@@ -191,64 +191,11 @@ void AFriendlyBaseTank::Fire()
 
 }
 
-void AFriendlyBaseTank::RotateTankTowerToEnemy(FVector& LookAtTarget)
-{
-	FVector ToTarget = LookAtTarget - TankTowerMesh->GetComponentLocation();
-	
-	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
-	DrawDebugCoordinateSystem(GetWorld(), TankTowerMesh->GetComponentLocation(), ToTargetProjectedXY.Rotation(), 200);
-	//UE_LOG(LogTemp, Warning, TEXT("ToTargetProjectedXY.Rotation(): %s"), *ToTargetProjectedXY.Rotation().ToString());
-	FRotator ToTargetProjectedRotator = ToTargetProjectedXY.Rotation();
-	FRotator StartTankTowerRotator = TankTowerMesh->GetComponentRotation();
-	//UE_LOG(LogTemp, Warning, TEXT("StartTankTowerRotator: %s"), *StartTankTowerRotator.ToString());
-
-	if (ToTarget.X < 0 && ToTarget.Y < 0)
-	{
-		//Calculate DeltaTaw
-		float DeltaYaw =  ToTargetProjectedRotator.Yaw + 180.f - StartTankTowerRotator.Yaw + 90.f;
-		//AddLocalRotation
-		FRotator LookAtRotation = TankTowerMesh->GetComponentRotation();
-		float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
-		float InterpYaw = FMath::FInterpTo(0, DeltaYaw, DeltaTime, TurnTankTowerInterpolationSpeed);
-		LookAtRotation = FRotator(0.f, InterpYaw, 0.f);
-		//UE_LOG(LogTemp, Warning, TEXT("LookAtRotation: %s"), *LookAtRotation.ToString());
-		TankTowerMesh->AddLocalRotation(LookAtRotation);
-		if (InterpYaw == DeltaYaw)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("TankTowerMesh->AddLocalRotation FINISHED!"));
-		}
-	}
-
-	else 
-	{
-		//Calculate DeltaTaw
-		float DeltaYawRAW = ToTargetProjectedRotator.Yaw - StartTankTowerRotator.Yaw - 90.f;
-		float DeltaYawAbs = FMath::Abs(ToTargetProjectedRotator.Yaw) - FMath::Abs(StartTankTowerRotator.Yaw);
-		DeltaYawAbs = FMath::Abs(DeltaYawAbs - 90.f);
-		float DeltaYaw = (DeltaYawAbs * DeltaYawRAW) / DeltaYawAbs;
-		//UE_LOG(LogTemp, Warning, TEXT("DeltaYaw: %f"), DeltaYaw);
-		//AddLocalRotation
-		FRotator LookAtRotation = TankTowerMesh->GetComponentRotation();
-		float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
-		float InterpYaw = FMath::FInterpTo(0, DeltaYaw , DeltaTime, TurnTankTowerInterpolationSpeed);
-		LookAtRotation = FRotator(0.f, InterpYaw, 0.f);
-		//UE_LOG(LogTemp, Warning, TEXT("LookAtRotation: %s"), *LookAtRotation.ToString());
-		TankTowerMesh->AddLocalRotation(LookAtRotation);
-
-		if (InterpYaw == DeltaYaw)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("TankTowerMesh->AddLocalRotation FINISHED!"));
-		}
-	}
-		
-	
-}
-
 void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TankPivot->GetComponentLocation();
 	FRotator TowerRelativeRotation = TankTowerMesh->GetRelativeRotation();;
-	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
+		FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
 	FRotator ActorRotation = GetActorRotation();
 	FRotator TargetDeltaRotator = ToTargetProjectedXY.Rotation();
 	TargetDeltaRotator.Yaw = TargetDeltaRotator.Yaw - ActorRotation.Yaw;
@@ -259,6 +206,7 @@ void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
 		TurnTankTowerInterpolationSpeed
 	);
 		
+	TankTowerMesh->SetRelativeRotation(TargetDeltaRotator.Quaternion());
 	
 }
 void AFriendlyBaseTank::Tick(float DeltaTime)
