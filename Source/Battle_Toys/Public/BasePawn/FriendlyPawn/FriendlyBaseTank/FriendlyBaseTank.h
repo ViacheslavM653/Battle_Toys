@@ -53,9 +53,22 @@ protected:
     /** Spawn Projectile and Produce Shot  */
     void Fire();
 
+    /** If an EnemyPawn is found - rotate TankTower to the Enemy location
+    * @param LookAtTarget - Enemy location
+    */
+    virtual void RotateTankTowerToEnemy(FVector& LookAtTarget);
+    /**  TankTower follow to the Enemy
+    * @param LookAtTarget - Enemy location
+    */
+    virtual void TurnTankTowerToEnemy(FVector& LookAtTarget);
+
 private:
     /**Calculated Position for Tank by tracing ground */
-    void SetTankPositionByTerrain();
+    void SetStartTankPositionByTerrain();
+    /** AsyncLineTraceByChannel by Visibility
+    * @param StartLocation - Location form start tracing;
+    * @param DepthTracingValue - depth value. */
+    FHitResult GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue);
     /** Calculate Pitch value from HitResult relative ActorRotation
     * @param HitResult - TracingResult.
     */
@@ -64,10 +77,6 @@ private:
     * @param HitResult - TracingResult.
     */
     float GetRollFromHitNormal(FHitResult& HitResult);
-    /** AsyncLineTraceByChannel by Visibility
-    * @param StartLocation - Location form start tracing;
-    * @param DepthTracingValue - depth value. */
-    FHitResult GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue);
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Component", meta = (AllowPrivateAccess = "true"))
         UCapsuleComponent* CapsuleComponent;

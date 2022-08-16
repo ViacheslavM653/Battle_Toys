@@ -12,6 +12,8 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include "BasePawn/EnemyPawn/EnemyPawn.h"
+
 
 
 AFriendlyBaseTank::AFriendlyBaseTank()
@@ -133,6 +135,147 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 
 /*---------End------------Temp Block----------------End------------------*/
 
+
+FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
+{
+	FHitResult OutHit;
+	FVector Start = StartLocation;
+	FVector DeltaLength = FVector::ZeroVector;
+	DeltaLength.Z = -DepthTracingValue;
+	FVector End = Start + DeltaLength;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
+
+	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
+
+	return OutHit;
+}
+
+float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
+{
+	FVector XZPlaneNormal = GetActorRightVector();
+	FVector SensorNormalToXZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, XZPlaneNormal);
+	FVector SensorNormalToXZCrossVsRightVector = SensorNormalToXZ.Cross(-XZPlaneNormal);
+	FRotator CrossRezultRotator = SensorNormalToXZCrossVsRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Pitch = CrossRezultRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+
+	return FinalRotator.Pitch;
+}
+
+float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
+{
+	FVector YZPlaneNormal = GetActorForwardVector();
+	FVector SensorNormalToYZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, YZPlaneNormal);
+	FVector SensorNormalToYZCrossVsRightVector = SensorNormalToYZ.Cross(-YZPlaneNormal);
+	FRotator CrossRezultRotator = SensorNormalToYZCrossVsRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Roll = CrossRezultRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+
+	return FinalRotator.Roll;
+}
+
+void AFriendlyBaseTank::Fire()
+{
+	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
+	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
+	if (ProjectileClass)
+	{
+		ABattleToysProjectile* Projectile = GetWorld()->SpawnActor<ABattleToysProjectile>(ABasePawn::ProjectileClass, Location, Rotation);
+		Projectile->SetOwner(this);
+	}
+
+
+}
+
+void AFriendlyBaseTank::RotateTankTowerToEnemy(FVector& LookAtTarget)
+{
+	FVector ToTarget = LookAtTarget - TankTowerMesh->GetComponentLocation();
+	
+	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
+	DrawDebugCoordinateSystem(GetWorld(), TankTowerMesh->GetComponentLocation(), ToTargetProjectedXY.Rotation(), 200);
+	//UE_LOG(LogTemp, Warning, TEXT("ToTargetProjectedXY.Rotation(): %s"), *ToTargetProjectedXY.Rotation().ToString());
+	FRotator ToTargetProjectedRotator = ToTargetProjectedXY.Rotation();
+	FRotator StartTankTowerRotator = TankTowerMesh->GetComponentRotation();
+	//UE_LOG(LogTemp, Warning, TEXT("StartTankTowerRotator: %s"), *StartTankTowerRotator.ToString());
+
+	if (ToTarget.X < 0 && ToTarget.Y < 0)
+	{
+		//Calculate DeltaTaw
+		float DeltaYaw =  ToTargetProjectedRotator.Yaw + 180.f - StartTankTowerRotator.Yaw + 90.f;
+		//AddLocalRotation
+		FRotator LookAtRotation = TankTowerMesh->GetComponentRotation();
+		float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
+		float InterpYaw = FMath::FInterpTo(0, DeltaYaw, DeltaTime, TurnTankTowerInterpolationSpeed);
+		LookAtRotation = FRotator(0.f, InterpYaw, 0.f);
+		//UE_LOG(LogTemp, Warning, TEXT("LookAtRotation: %s"), *LookAtRotation.ToString());
+		TankTowerMesh->AddLocalRotation(LookAtRotation);
+		if (InterpYaw == DeltaYaw)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TankTowerMesh->AddLocalRotation FINISHED!"));
+		}
+	}
+
+	else 
+	{
+		//Calculate DeltaTaw
+		float DeltaYawRAW = ToTargetProjectedRotator.Yaw - StartTankTowerRotator.Yaw - 90.f;
+		float DeltaYawAbs = FMath::Abs(ToTargetProjectedRotator.Yaw) - FMath::Abs(StartTankTowerRotator.Yaw);
+		DeltaYawAbs = FMath::Abs(DeltaYawAbs - 90.f);
+		float DeltaYaw = (DeltaYawAbs * DeltaYawRAW) / DeltaYawAbs;
+		//UE_LOG(LogTemp, Warning, TEXT("DeltaYaw: %f"), DeltaYaw);
+		//AddLocalRotation
+		FRotator LookAtRotation = TankTowerMesh->GetComponentRotation();
+		float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
+		float InterpYaw = FMath::FInterpTo(0, DeltaYaw , DeltaTime, TurnTankTowerInterpolationSpeed);
+		LookAtRotation = FRotator(0.f, InterpYaw, 0.f);
+		//UE_LOG(LogTemp, Warning, TEXT("LookAtRotation: %s"), *LookAtRotation.ToString());
+		TankTowerMesh->AddLocalRotation(LookAtRotation);
+
+		if (InterpYaw == DeltaYaw)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TankTowerMesh->AddLocalRotation FINISHED!"));
+		}
+	}
+		
+	
+}
+
+void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
+{
+	FVector ToTarget = LookAtTarget - TankPivot->GetComponentLocation();
+	FRotator TowerRelativeRotation = TankTowerMesh->GetRelativeRotation();;
+	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
+	FRotator ActorRotation = GetActorRotation();
+	FRotator TargetDeltaRotator = ToTargetProjectedXY.Rotation();
+	TargetDeltaRotator.Yaw = TargetDeltaRotator.Yaw - ActorRotation.Yaw;
+	TargetDeltaRotator = FMath::RInterpTo(
+		TowerRelativeRotation,
+		TargetDeltaRotator,
+		UGameplayStatics::GetWorldDeltaSeconds(this),
+		TurnTankTowerInterpolationSpeed
+	);
+		
+	
+}
+void AFriendlyBaseTank::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	SetupTankOnGround();
+
+
+	TArray<AActor*> TargetTowerCount;
+	UGameplayStatics::GetAllActorsOfClass(this, AEnemyPawn::StaticClass(), TargetTowerCount);
+
+	FVector LookAtTarget = TargetTowerCount[0]->GetActorLocation();
+	TurnTankTowerToEnemy(LookAtTarget);
+	
+}
+
 void AFriendlyBaseTank::SetupTankOnGround()
 {
 	float DepthTracingValue = 300.f;
@@ -203,102 +346,29 @@ void AFriendlyBaseTank::SetupTankOnGround()
 	TankPivot->SetRelativeRotation(DirectRotator.Quaternion());
 }
 
-FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
-{
-	FHitResult OutHit;
-	FVector Start = StartLocation;
-	FVector DeltaLength = FVector::ZeroVector;
-	DeltaLength.Z = -DepthTracingValue;
-	FVector End = Start + DeltaLength;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
-
-	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
-
-	return OutHit;
-}
-
-float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
-{
-	FVector XZPlaneNormal = GetActorRightVector();
-	FVector SensorNormalToXZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, XZPlaneNormal);
-	FVector SensorNormalToXZCrossVsRightVector = SensorNormalToXZ.Cross(-XZPlaneNormal);
-	FRotator CrossRezultRotator = SensorNormalToXZCrossVsRightVector.Rotation();
-	FRotator ActorRotation = GetActorRotation();
-	ActorRotation.Pitch = CrossRezultRotator.Pitch;
-	FRotator FinalRotator = ActorRotation - GetActorRotation();
-
-	return FinalRotator.Pitch;
-}
-
-float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
-{
-	FVector YZPlaneNormal = GetActorForwardVector();
-	FVector SensorNormalToYZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, YZPlaneNormal);
-	FVector SensorNormalToYZCrossVsRightVector = SensorNormalToYZ.Cross(-YZPlaneNormal);
-	FRotator CrossRezultRotator = SensorNormalToYZCrossVsRightVector.Rotation();
-	FRotator ActorRotation = GetActorRotation();
-	ActorRotation.Roll = CrossRezultRotator.Pitch;
-	FRotator FinalRotator = ActorRotation - GetActorRotation();
-
-	return FinalRotator.Roll;
-}
-
-void AFriendlyBaseTank::Fire()
-{
-	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
-	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
-	if (ProjectileClass)
-	{
-		ABattleToysProjectile* Projectile = GetWorld()->SpawnActor<ABattleToysProjectile>(ABasePawn::ProjectileClass, Location, Rotation);
-		Projectile->SetOwner(this);
-	}
-
-
-}
-
-void AFriendlyBaseTank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	SetupTankOnGround();
-}
-
 void AFriendlyBaseTank::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetStartTankPositionByTerrain();
+
+	//TArray<AActor*> TargetTowerCount;
+	//UGameplayStatics::GetAllActorsOfClass(this, AEnemyPawn::StaticClass(), TargetTowerCount);
+
+	//FVector LookAtTarget = TargetTowerCount[0]->GetActorLocation();
+	//RotateTankTowerToEnemy(LookAtTarget);
+
 }
 
-void AFriendlyBaseTank::SetTankPositionByTerrain()
+void AFriendlyBaseTank::SetStartTankPositionByTerrain()
 {
-	FHitResult OutHit;
-	FVector Start = TankPivot->GetComponentLocation();
-	FVector DeltaLength = FVector::ZeroVector;
-	DeltaLength.Z = -100;
-	FVector End = Start + DeltaLength;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
+	FVector StartLocation = TankPivot->GetComponentLocation();
+	float DepthTracingValue = 300.f;
+	FHitResult OutHit = GetTracingResultByVisibility(StartLocation, DepthTracingValue);
+	float CorrectionValue = OutHit.Distance;
 
-	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
-
-	//UE_LOG(LogTemp, Warning, TEXT("HitActor: "));
-	FVector HitPoint = OutHit.ImpactPoint;
-	FVector HItPointForwardVector = HitPoint.ForwardVector;
-	FVector HitNormal = OutHit.ImpactNormal;
-	FRotator HitRotator = HitNormal.Rotation();
-
-	DrawDebugCoordinateSystem(GetWorld(), HitPoint, HitRotator, 100.f);
-	//FVector DeltaLocationOffset = GetActorLocation();
-
-	//FVector TankPivotLocation = TankPivot->GetComponentLocation();
-	//DeltaLocationOffset.Z = DeltaLocationOffset.Z + (TankPivotLocation.Z - HitPoint.Z);
-
-	//AddActorLocalOffset(DeltaLocationOffset, true);
-
-
-
+	FVector ActorSetupLocation = GetActorLocation();
+	ActorSetupLocation.Z = ActorSetupLocation.Z - CorrectionValue * 0.99;
+	SetActorLocation(ActorSetupLocation);
 }
 
