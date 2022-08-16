@@ -195,7 +195,7 @@ void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TankPivot->GetComponentLocation();
 	FRotator TowerRelativeRotation = TankTowerMesh->GetRelativeRotation();;
-		FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
+	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
 	FRotator ActorRotation = GetActorRotation();
 	FRotator TargetDeltaRotator = ToTargetProjectedXY.Rotation();
 	TargetDeltaRotator.Yaw = TargetDeltaRotator.Yaw - ActorRotation.Yaw;
@@ -214,13 +214,6 @@ void AFriendlyBaseTank::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SetupTankOnGround();
-
-
-	TArray<AActor*> TargetTowerCount;
-	UGameplayStatics::GetAllActorsOfClass(this, AEnemyPawn::StaticClass(), TargetTowerCount);
-
-	FVector LookAtTarget = TargetTowerCount[0]->GetActorLocation();
-	TurnTankTowerToEnemy(LookAtTarget);
 	
 }
 
@@ -280,18 +273,23 @@ void AFriendlyBaseTank::SetupTankOnGround()
 			BackwardRightWheelSensorRoll +
 			BackwardLeftWheelSensorRoll) / 4
 		;
-
-	FRotator TargetRotator = GetActorRotation();
-	float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
-	float CorrectorFPS = (0.5 / DeltaTime) * DeltaTime;
-
+		
+	FRotator ActorRotation = GetActorRotation();
+	FRotator TankPivotRelativeRotation = TankPivot->GetRelativeRotation();
 	
-	TargetRotator.Pitch = TargetRotator.Pitch + AveragePitch;// * CorrectorFPS;
-	TargetRotator.Roll = TargetRotator.Roll + AverageRoll; // *CorrectorFPS;
-	FRotator DirectRotator = TargetRotator - GetActorRotation();
+	FRotator NeedDeltaRotator = FRotator(AveragePitch, 0.f, AverageRoll);
+	NeedDeltaRotator.Pitch = NeedDeltaRotator.Pitch - ActorRotation.Pitch;
+	NeedDeltaRotator.Roll = NeedDeltaRotator.Roll - ActorRotation.Roll;
+	FRotator NewRotation = NeedDeltaRotator;
 	
-	//Direct rotate TankPivot
-	TankPivot->SetRelativeRotation(DirectRotator.Quaternion());
+	NewRotation = FMath::RInterpTo(
+		TankPivotRelativeRotation,
+		NewRotation,
+		UGameplayStatics::GetWorldDeltaSeconds(this),
+		TurnTankTowerInterpolationSpeed
+	);
+	
+	TankPivot->SetRelativeRotation(NewRotation.Quaternion());
 }
 
 void AFriendlyBaseTank::BeginPlay()
