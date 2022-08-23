@@ -24,10 +24,16 @@ public:
 
     /**  Get Value TankSpeedRate (from 0 to 1) for amimation */
     UFUNCTION(BlueprintPure)
-    float GetTankSpeedRateForAnimation();
-    /**  -------------------- */
+    virtual float GetTankSpeedRateForAnimation();
+
+  
+    /** Get Value TankTurnRate (from 0 to 1) for amimation */
     UFUNCTION(BlueprintPure)
     virtual float GetTankTurnRightForAnimation();
+
+    
+    
+
 
     /*---------Start------------Temp Block----------------Start------------------*/
 
@@ -36,7 +42,7 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     void Move(float AxisValue);
-
+    float MoveForwardValue;
     /** Find Vector for Move() function use Ground */
     FVector FindMovementInputVector(float AxisValue);
 
@@ -138,4 +144,5 @@ private:
     int32 CurrentHistoryIterrator = 0;
 
     TStaticArray<FRotator, TankRotationHistoryDepth>TankRotationHistoryArray;
+   
 };

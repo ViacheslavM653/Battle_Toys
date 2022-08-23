@@ -72,7 +72,7 @@ void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void AFriendlyBaseTank::Move(float AxisValue)
 {
-
+	MoveForwardValue = AxisValue;
 	AddMovementInput(FindMovementInputVector(AxisValue) * AxisValue);
 
 }
@@ -131,8 +131,21 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 	FRotator DeltaRotation = FRotator::ZeroRotator;
 	// Yaw = Value * DeltaTime * TurnRate;
 	float DeltaTime = UGameplayStatics::GetWorldDeltaSeconds(this);
-	DeltaRotation.Yaw = AxisValue * DeltaTime * TurnRate;
-	AddActorLocalRotation(DeltaRotation, true);
+	if (MoveForwardValue > 0)
+	{
+		DeltaRotation.Yaw = AxisValue * DeltaTime * TurnRate;
+		AddActorLocalRotation(DeltaRotation, true);
+	}
+	if (MoveForwardValue < 0)
+	{
+		DeltaRotation.Yaw = -AxisValue * DeltaTime * TurnRate;
+		AddActorLocalRotation(DeltaRotation, true);
+	}
+	if (MoveForwardValue == 0)
+	{
+		DeltaRotation.Yaw = AxisValue * DeltaTime * TurnRate;
+		AddActorLocalRotation(DeltaRotation, true);
+	}
 }
 
 /*---------End------------Temp Block----------------End------------------*/
@@ -353,21 +366,22 @@ void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
 {
 	FVector TankForwardVector = GetActorForwardVector();
 
-	if (CurrentHistoryIterrator > (StorageDepth - 1))
+	/*if (CurrentHistoryIterrator > (StorageDepth - 1))
 	{
 		CurrentHistoryIterrator = 0;
-	}
-
-	TankRotationHistoryArray[CurrentHistoryIterrator] = TankForwardVector.Rotation();
+	}*/
 	
-	CurrentHistoryIterrator += 1;
-		
+	for (int32 Cell = (StorageDepth - 1); Cell >= 1; Cell--)
+	{
+		TankRotationHistoryArray[Cell - 1] = TankRotationHistoryArray[Cell];
+	}
+	TankRotationHistoryArray[StorageDepth - 1] = TankForwardVector.Rotation();
 }
 
 float AFriendlyBaseTank::GetTankTurnRightForAnimation()
 {
 	FRotator NewTankForwardRotation = GetActorForwardVector().Rotation();
-
+	//UE_LOG(LogTemp, Warning, TEXT("TankRotationHistoryArray[0]: %s"), TankRotationHistoryArray[0].ToString());
 	FRotator DeltaRotation = NewTankForwardRotation - TankRotationHistoryArray[0];
 
 	if (FMath::Abs(DeltaRotation.Yaw) > 180)
@@ -381,18 +395,23 @@ float AFriendlyBaseTank::GetTankTurnRightForAnimation()
 			DeltaRotation.Yaw = DeltaRotation.Yaw + 360.f;
 		}
 	}
-	float Result;
+	
+	float FinalResult;
+	if (DeltaRotation.Yaw == 0)
+	{
+		FinalResult = 0;
+	}
 	if (DeltaRotation.Yaw > 0)
 	{
 		float InputMax = DeltaRotation.Yaw;
-		Result = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, 1), DeltaRotation.Yaw);
+		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, 1), DeltaRotation.Yaw);
 		
 	}
 	if (DeltaRotation.Yaw < 0)
 	{
 		float InputMax = DeltaRotation.Yaw;
-		Result = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
+		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
 	}
-
-	return Result;
+	
+	return FinalResult;
 }
