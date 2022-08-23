@@ -175,7 +175,7 @@ void AFriendlyBaseTank::Tick(float DeltaTime)
 	SetupTankOnGround();
 		
 	StorageActorRotation(TankRotationHistoryDepth);
-
+		
 }
 
 void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
@@ -381,5 +381,17 @@ float AFriendlyBaseTank::GetTankTurnRightForAnimation()
 			DeltaRotation.Yaw = DeltaRotation.Yaw + 360.f;
 		}
 	}
-	return DeltaRotation.Yaw;
+	float Result;
+	if (DeltaRotation.Yaw > 0)
+	{
+		float InputMax = DeltaRotation.Yaw;
+		Result = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, 1), DeltaRotation.Yaw);
+		
+	}
+	if (DeltaRotation.Yaw < 0)
+	{
+		float InputMax = DeltaRotation.Yaw;
+		Result = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
+	}
+	return Result;
 }
