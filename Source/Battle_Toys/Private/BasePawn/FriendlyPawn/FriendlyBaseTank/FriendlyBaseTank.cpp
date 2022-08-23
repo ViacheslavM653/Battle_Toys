@@ -393,5 +393,6 @@ float AFriendlyBaseTank::GetTankTurnRightForAnimation()
 		float InputMax = DeltaRotation.Yaw;
 		Result = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
 	}
+
 	return Result;
 }
