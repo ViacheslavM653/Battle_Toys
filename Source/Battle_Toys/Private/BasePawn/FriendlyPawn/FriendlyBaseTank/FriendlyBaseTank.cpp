@@ -12,6 +12,8 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 
+
+
 #include "BasePawn/EnemyPawn/EnemyPawn.h"
 
 
@@ -136,47 +138,8 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 /*---------End------------Temp Block----------------End------------------*/
 
 
-FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
-{
-	FHitResult OutHit;
-	FVector Start = StartLocation;
-	FVector DeltaLength = FVector::ZeroVector;
-	DeltaLength.Z = -DepthTracingValue;
-	FVector End = Start + DeltaLength;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
 
-	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
 
-	return OutHit;
-}
-
-float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
-{
-	FVector XZPlaneNormal = GetActorRightVector();
-	FVector SensorNormalToXZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, XZPlaneNormal);
-	FVector SensorNormalToXZCrossVsRightVector = SensorNormalToXZ.Cross(-XZPlaneNormal);
-	FRotator CrossRezultRotator = SensorNormalToXZCrossVsRightVector.Rotation();
-	FRotator ActorRotation = GetActorRotation();
-	ActorRotation.Pitch = CrossRezultRotator.Pitch;
-	FRotator FinalRotator = ActorRotation - GetActorRotation();
-
-	return FinalRotator.Pitch;
-}
-
-float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
-{
-	FVector YZPlaneNormal = GetActorForwardVector();
-	FVector SensorNormalToYZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, YZPlaneNormal);
-	FVector SensorNormalToYZCrossVsRightVector = SensorNormalToYZ.Cross(-YZPlaneNormal);
-	FRotator CrossRezultRotator = SensorNormalToYZCrossVsRightVector.Rotation();
-	FRotator ActorRotation = GetActorRotation();
-	ActorRotation.Roll = CrossRezultRotator.Pitch;
-	FRotator FinalRotator = ActorRotation - GetActorRotation();
-
-	return FinalRotator.Roll;
-}
 
 void AFriendlyBaseTank::Fire()
 {
@@ -188,6 +151,30 @@ void AFriendlyBaseTank::Fire()
 		Projectile->SetOwner(this);
 	}
 
+
+}
+
+void AFriendlyBaseTank::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetStartTankPositionByTerrain();
+
+	//TArray<AActor*> TargetTowerCount;
+	//UGameplayStatics::GetAllActorsOfClass(this, AEnemyPawn::StaticClass(), TargetTowerCount);
+
+	//FVector LookAtTarget = TargetTowerCount[0]->GetActorLocation();
+	//RotateTankTowerToEnemy(LookAtTarget);
+
+}
+
+void AFriendlyBaseTank::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	SetupTankOnGround();
+		
+	StorageActorRotation(TankRotationHistoryDepth);
 
 }
 
@@ -207,13 +194,6 @@ void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
 	);
 		
 	TankTowerMesh->SetRelativeRotation(TargetDeltaRotator.Quaternion());
-	
-}
-void AFriendlyBaseTank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	SetupTankOnGround();
 	
 }
 
@@ -292,19 +272,32 @@ void AFriendlyBaseTank::SetupTankOnGround()
 	TankPivot->SetRelativeRotation(NewRotation.Quaternion());
 }
 
-void AFriendlyBaseTank::BeginPlay()
+float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
 {
-	Super::BeginPlay();
+	FVector XZPlaneNormal = GetActorRightVector();
+	FVector SensorNormalToXZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, XZPlaneNormal);
+	FVector SensorNormalToXZCrossVsRightVector = SensorNormalToXZ.Cross(-XZPlaneNormal);
+	FRotator CrossRezultRotator = SensorNormalToXZCrossVsRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Pitch = CrossRezultRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
 
-	SetStartTankPositionByTerrain();
-
-	//TArray<AActor*> TargetTowerCount;
-	//UGameplayStatics::GetAllActorsOfClass(this, AEnemyPawn::StaticClass(), TargetTowerCount);
-
-	//FVector LookAtTarget = TargetTowerCount[0]->GetActorLocation();
-	//RotateTankTowerToEnemy(LookAtTarget);
-
+	return FinalRotator.Pitch;
 }
+
+float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
+{
+	FVector YZPlaneNormal = GetActorForwardVector();
+	FVector SensorNormalToYZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, YZPlaneNormal);
+	FVector SensorNormalToYZCrossVsRightVector = SensorNormalToYZ.Cross(-YZPlaneNormal);
+	FRotator CrossRezultRotator = SensorNormalToYZCrossVsRightVector.Rotation();
+	FRotator ActorRotation = GetActorRotation();
+	ActorRotation.Roll = CrossRezultRotator.Pitch;
+	FRotator FinalRotator = ActorRotation - GetActorRotation();
+
+	return FinalRotator.Roll;
+}
+
 
 void AFriendlyBaseTank::SetStartTankPositionByTerrain()
 {
@@ -318,3 +311,75 @@ void AFriendlyBaseTank::SetStartTankPositionByTerrain()
 	SetActorLocation(ActorSetupLocation);
 }
 
+FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
+{
+	FHitResult OutHit;
+	FVector Start = StartLocation;
+	FVector DeltaLength = FVector::ZeroVector;
+	DeltaLength.Z = -DepthTracingValue;
+	FVector End = Start + DeltaLength;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
+
+	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECollisionChannel::ECC_Visibility, Params);
+
+	return OutHit;
+}
+
+float AFriendlyBaseTank::GetTankSpeedRateForAnimation()
+{
+	// Find speed rate
+	FVector TankActorForwardVector = this->GetActorForwardVector();
+	FVector TankVelocity = this->GetVelocity();
+	float TankSpeedValue = TankVelocity.Length();
+	float TankSpeedRate = FMath::GetMappedRangeValueUnclamped(
+		FVector2D(0.f, MovementComponent->MaxSpeed),
+		FVector2D(0.f, 1.f),
+		TankSpeedValue
+		);
+	// Find speed sign
+	float TankSpeedSign = TankVelocity.Y * TankActorForwardVector.Y;
+	if (TankSpeedSign != 0)
+	{
+		TankSpeedSign = TankSpeedSign / FMath::Abs(TankSpeedSign);
+		TankSpeedRate = TankSpeedRate * TankSpeedSign;
+	}
+
+	return TankSpeedRate;
+}
+
+void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
+{
+	FVector TankForwardVector = GetActorForwardVector();
+
+	if (CurrentHistoryIterrator > (StorageDepth - 1))
+	{
+		CurrentHistoryIterrator = 0;
+	}
+
+	TankRotationHistoryArray[CurrentHistoryIterrator] = TankForwardVector.Rotation();
+	
+	CurrentHistoryIterrator += 1;
+		
+}
+
+float AFriendlyBaseTank::GetTankTurnRightForAnimation()
+{
+	FRotator NewTankForwardRotation = GetActorForwardVector().Rotation();
+
+	FRotator DeltaRotation = NewTankForwardRotation - TankRotationHistoryArray[0];
+
+	if (FMath::Abs(DeltaRotation.Yaw) > 180)
+	{
+		if (NewTankForwardRotation.Yaw > 0)
+		{
+			DeltaRotation.Yaw = DeltaRotation.Yaw - 360.f;
+		}
+		if (NewTankForwardRotation.Yaw < 0)
+		{
+			DeltaRotation.Yaw = DeltaRotation.Yaw + 360.f;
+		}
+	}
+	return DeltaRotation.Yaw;
+}

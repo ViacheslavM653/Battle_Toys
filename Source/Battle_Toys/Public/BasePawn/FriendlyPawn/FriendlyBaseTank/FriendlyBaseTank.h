@@ -22,6 +22,12 @@ public:
     // Sets default values for this pawn's properties
     AFriendlyBaseTank();
 
+    /**  Get Value TankSpeedRate (from 0 to 1) for amimation */
+    UFUNCTION(BlueprintPure)
+    float GetTankSpeedRateForAnimation();
+    /**  -------------------- */
+    UFUNCTION(BlueprintPure)
+    virtual float GetTankTurnRightForAnimation();
 
     /*---------Start------------Temp Block----------------Start------------------*/
 
@@ -73,6 +79,8 @@ private:
     * @param HitResult - TracingResult.
     */
     float GetRollFromHitNormal(FHitResult& HitResult);
+    /** Storage TankRotation.Yaw to TankRotationHistoryArray */
+    void StorageActorRotation(int32 StorageDepth);
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Component", meta = (AllowPrivateAccess = "true"))
         UCapsuleComponent* CapsuleComponent;
@@ -119,4 +127,15 @@ private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnRate = 50.f;
 
+    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+        float TankSpeedForAnimation;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+        float TankTurnRightForAnimation;
+    /** how many times need to storage TankRotation.Yaw to TankRotationHistoryArray */
+    static const uint32 TankRotationHistoryDepth = 10;
+
+    int32 CurrentHistoryIterrator = 0;
+
+    TStaticArray<FRotator, TankRotationHistoryDepth>TankRotationHistoryArray;
 };
