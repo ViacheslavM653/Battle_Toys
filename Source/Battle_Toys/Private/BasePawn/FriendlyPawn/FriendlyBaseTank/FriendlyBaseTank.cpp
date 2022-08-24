@@ -13,11 +13,6 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
-
-#include "BasePawn/EnemyPawn/EnemyPawn.h"
-
-
-
 AFriendlyBaseTank::AFriendlyBaseTank()
 {
 	//Creating Hirarchical Structure
@@ -66,7 +61,7 @@ void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AFriendlyBaseTank::Fire);
 }
 
-float AFriendlyBaseTank::GetRightTrackAnimationSpeed()
+float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 {
 	float RightTrackAnimationSpeed = 0;
 	float TankSpeedRate = GetTankSpeedRateForAnimation();
@@ -120,7 +115,7 @@ float AFriendlyBaseTank::GetRightTrackAnimationSpeed()
 	return RightTrackAnimationSpeed;
 }
 
-float AFriendlyBaseTank::GetLeftTrackAnimationSpeed()
+float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 {
 	float LeftTrackAnimationSpeed = 0;
 	float TankSpeedRate = GetTankSpeedRateForAnimation();
@@ -266,20 +261,15 @@ void AFriendlyBaseTank::Fire()
 void AFriendlyBaseTank::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetStartTankPositionByTerrain();
-
-	//TArray<AActor*> TargetTowerCount;
-	//UGameplayStatics::GetAllActorsOfClass(this, AEnemyPawn::StaticClass(), TargetTowerCount);
-
-	//FVector LookAtTarget = TargetTowerCount[0]->GetActorLocation();
-	//RotateTankTowerToEnemy(LookAtTarget);
-
+	
+	KeepTankPositionOnGround();
 }
 
 void AFriendlyBaseTank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
 
 	SetupTankOnGround();
 		
@@ -375,7 +365,7 @@ void AFriendlyBaseTank::SetupTankOnGround()
 		TankPivotRelativeRotation,
 		NewRotation,
 		UGameplayStatics::GetWorldDeltaSeconds(this),
-		SuspensionSoftneess
+		SuspensionHardness
 	);
 	
 	TankPivot->SetRelativeRotation(NewRotation.Quaternion());
@@ -407,16 +397,22 @@ float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
 	return FinalRotator.Roll;
 }
 
-void AFriendlyBaseTank::SetStartTankPositionByTerrain()
+void AFriendlyBaseTank::KeepTankPositionOnGround()
 {
 	FVector StartLocation = TankPivot->GetComponentLocation();
 	float DepthTracingValue = 300.f;
 	FHitResult OutHit = GetTracingResultByVisibility(StartLocation, DepthTracingValue);
 	float CorrectionValue = OutHit.Distance;
 
-	FVector ActorSetupLocation = GetActorLocation();
-	ActorSetupLocation.Z = ActorSetupLocation.Z - CorrectionValue * 0.99;
-	SetActorLocation(ActorSetupLocation);
+	FVector NewActorSetupLocation = GetActorLocation();
+	NewActorSetupLocation.Z = NewActorSetupLocation.Z - CorrectionValue * 0.99;
+	NewActorSetupLocation.Z = FMath::FInterpTo(
+		StartLocation.Z,
+		NewActorSetupLocation.Z,
+		UGameplayStatics::GetWorldDeltaSeconds(this),
+		SuspensionHardness
+	);
+	SetActorLocation(NewActorSetupLocation);
 }
 
 FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
@@ -460,11 +456,6 @@ float AFriendlyBaseTank::GetTankSpeedRateForAnimation()
 void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
 {
 	FVector TankForwardVector = GetActorForwardVector();
-
-	/*if (CurrentHistoryIterrator > (StorageDepth - 1))
-	{
-		CurrentHistoryIterrator = 0;
-	}*/
 	
 	for (int32 Cell = (StorageDepth - 1); Cell >= 1; Cell--)
 	{

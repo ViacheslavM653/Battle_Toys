@@ -25,10 +25,10 @@ public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     /** Float value for animation rate (from -1 to 1) */
     UFUNCTION(BlueprintPure)
-    float GetRightTrackAnimationSpeed();
+    float GetRightWheelsAnimationSpeed();
     /** Float value for animation rate (from -1 to 1) */
     UFUNCTION(BlueprintPure)
-    float GetLeftTrackAnimationSpeed();
+    float GetLeftWheelsAnimationSpeed();
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
@@ -57,8 +57,8 @@ protected:
     virtual void TurnTankTowerToEnemy(FVector& LookAtTarget);
 
 private:
-    /**Calculated Position for Tank by tracing ground */
-    void SetStartTankPositionByTerrain();
+    /**Calculated Position for Tank  and set on ground */
+    void KeepTankPositionOnGround();
     /** AsyncLineTraceByChannel by Visibility
     * @param StartLocation - Location form start tracing;
     * @param DepthTracingValue - depth value. */
@@ -122,21 +122,20 @@ private:
         float TurnTankTowerInterpolationSpeed = 5.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        float SuspensionSoftneess = 3.f;
+        float SuspensionHardness = 10.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnRate = 50.f;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        float TankSpeedForAnimation;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+        float TankWheelAnimationSpeedMultiplier = 1;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        float TankTurnRightForAnimation;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+        float TankTrackAnimationSpeedMultiplier = 1;
+      
     /** how many times need to storage TankRotation.Yaw to TankRotationHistoryArray */
     static const uint32 TankRotationHistoryDepth = 10;
-
-    int32 CurrentHistoryIterrator = 0;
-
+     
     TStaticArray<FRotator, TankRotationHistoryDepth>TankRotationHistoryArray;
    
 };
