@@ -56,9 +56,6 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Pawn Movement Component"));
 }
 
-/*---------Start------------Temp Block----------------Start------------------*/
-
-
 void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -69,6 +66,113 @@ void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AFriendlyBaseTank::Fire);
 }
 
+float AFriendlyBaseTank::GetRightTrackAnimationSpeed()
+{
+	float RightTrackAnimationSpeed = 0;
+	float TankSpeedRate = GetTankSpeedRateForAnimation();
+	float TankTurnRight = GetTankTurnRightForAnimation();
+	//Tank not move
+	if (TankSpeedRate == 0 && TankTurnRight == 0)
+	{
+		RightTrackAnimationSpeed = 0;
+	}
+	//Tank turn right
+	if (TankSpeedRate == 0 && TankTurnRight > 0)
+	{
+		RightTrackAnimationSpeed = 0;
+	}
+	//Tank turn left
+	if (TankSpeedRate == 0 && TankTurnRight < 0)
+	{
+		RightTrackAnimationSpeed = 1;
+	}
+	//Tank only move forward
+	if (TankSpeedRate > 0 && TankTurnRight == 0)
+	{
+		RightTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank move forward and turn right
+	if (TankSpeedRate > 0 && TankTurnRight > 0)
+	{
+		RightTrackAnimationSpeed = 0;
+	}
+	//Tank move forward and turn left
+	if (TankSpeedRate > 0 && TankTurnRight < 0)
+	{
+		RightTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank only move backward
+	if (TankSpeedRate < 0 && TankTurnRight == 0)
+	{
+		RightTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank move backward and turn right
+	if (TankSpeedRate < 0 && TankTurnRight < 0)
+	{
+		RightTrackAnimationSpeed = 0;
+	}
+	//Tank move backward and turn left
+	if (TankSpeedRate < 0 && TankTurnRight > 0)
+	{
+		RightTrackAnimationSpeed = TankSpeedRate;
+	}
+
+	return RightTrackAnimationSpeed;
+}
+
+float AFriendlyBaseTank::GetLeftTrackAnimationSpeed()
+{
+	float LeftTrackAnimationSpeed = 0;
+	float TankSpeedRate = GetTankSpeedRateForAnimation();
+	float TankTurnRight = GetTankTurnRightForAnimation();
+	//Tank not move
+	if (TankSpeedRate == 0 && TankTurnRight == 0)
+	{
+		LeftTrackAnimationSpeed = 0;
+	}
+	//Tank turn right
+	if (TankSpeedRate == 0 && TankTurnRight > 0)
+	{
+		LeftTrackAnimationSpeed = 1;
+	}
+	//Tank turn left
+	if (TankSpeedRate == 0 && TankTurnRight < 0)
+	{
+		LeftTrackAnimationSpeed = 0;
+	}
+	//Tank only move forward
+	if (TankSpeedRate > 0 && TankTurnRight == 0)
+	{
+		LeftTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank move forward and turn right
+	if (TankSpeedRate > 0 && TankTurnRight > 0)
+	{
+		LeftTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank move forward and turn left
+	if (TankSpeedRate > 0 && TankTurnRight < 0)
+	{
+		LeftTrackAnimationSpeed = 0;
+	}
+	//Tank only move backward
+	if (TankSpeedRate < 0 && TankTurnRight == 0)
+	{
+		LeftTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank move backward and turn right
+	if (TankSpeedRate < 0 && TankTurnRight < 0)
+	{
+		LeftTrackAnimationSpeed = TankSpeedRate;
+	}
+	//Tank move backward and turn left
+	if (TankSpeedRate < 0 && TankTurnRight > 0)
+	{
+		LeftTrackAnimationSpeed = 0;
+	}
+	
+	return LeftTrackAnimationSpeed;
+}
 
 void AFriendlyBaseTank::Move(float AxisValue)
 {
@@ -122,8 +226,6 @@ FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 	return MovementInputVector;
 }
 
-
-
 void AFriendlyBaseTank::Turn(float AxisValue)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("TurnRight Axis Value: %f"), AxisValue);
@@ -147,12 +249,6 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 		AddActorLocalRotation(DeltaRotation, true);
 	}
 }
-
-/*---------End------------Temp Block----------------End------------------*/
-
-
-
-
 
 void AFriendlyBaseTank::Fire()
 {
@@ -279,7 +375,7 @@ void AFriendlyBaseTank::SetupTankOnGround()
 		TankPivotRelativeRotation,
 		NewRotation,
 		UGameplayStatics::GetWorldDeltaSeconds(this),
-		TurnTankTowerInterpolationSpeed
+		SuspensionSoftneess
 	);
 	
 	TankPivot->SetRelativeRotation(NewRotation.Quaternion());
@@ -310,7 +406,6 @@ float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
 
 	return FinalRotator.Roll;
 }
-
 
 void AFriendlyBaseTank::SetStartTankPositionByTerrain()
 {

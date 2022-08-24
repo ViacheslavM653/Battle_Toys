@@ -21,37 +21,14 @@ class BATTLE_TOYS_API AFriendlyBaseTank : public AFriendlyPawn
 public:
     // Sets default values for this pawn's properties
     AFriendlyBaseTank();
-
-    /**  Get Value TankSpeedRate (from 0 to 1) for amimation */
-    UFUNCTION(BlueprintPure)
-    virtual float GetTankSpeedRateForAnimation();
-
-  
-    /** Get Value TankTurnRate (from 0 to 1) for amimation */
-    UFUNCTION(BlueprintPure)
-    virtual float GetTankTurnRightForAnimation();
-
-    
-    
-
-
-    /*---------Start------------Temp Block----------------Start------------------*/
-
-
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-    void Move(float AxisValue);
-    float MoveForwardValue;
-    /** Find Vector for Move() function use Ground */
-    FVector FindMovementInputVector(float AxisValue);
-
-    void Turn(float AxisValue);
-
-
-    /*---------End------------Temp Block----------------End------------------*/
-
-
+    /** Float value for animation rate (from -1 to 1) */
+    UFUNCTION(BlueprintPure)
+    float GetRightTrackAnimationSpeed();
+    /** Float value for animation rate (from -1 to 1) */
+    UFUNCTION(BlueprintPure)
+    float GetLeftTrackAnimationSpeed();
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
@@ -64,6 +41,15 @@ protected:
 
     /** Spawn Projectile and Produce Shot  */
     void Fire();
+
+    /** Move Tank by PlayerInput */
+    void Move(float AxisValue);
+    /** Value from PlayerInput */
+    float MoveForwardValue;
+    /** Find Vector for Move() function use Ground */
+    FVector FindMovementInputVector(float AxisValue);
+    /** Turn Tank by PlayerInput */
+    void Turn(float AxisValue);
        
     /**  TankTower follow to the Enemy
     * @param LookAtTarget - Enemy location
@@ -87,6 +73,11 @@ private:
     float GetRollFromHitNormal(FHitResult& HitResult);
     /** Storage TankRotation.Yaw to TankRotationHistoryArray */
     void StorageActorRotation(int32 StorageDepth);
+
+    /**  Get Value TankSpeedRate (from 0 to 1) for amimation */
+    virtual float GetTankSpeedRateForAnimation();
+    /** Get Value TankTurnRate (from 0 to 1) for amimation */
+    virtual float GetTankTurnRightForAnimation();
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Component", meta = (AllowPrivateAccess = "true"))
         UCapsuleComponent* CapsuleComponent;
@@ -129,6 +120,9 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnTankTowerInterpolationSpeed = 5.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+        float SuspensionSoftneess = 3.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnRate = 50.f;
