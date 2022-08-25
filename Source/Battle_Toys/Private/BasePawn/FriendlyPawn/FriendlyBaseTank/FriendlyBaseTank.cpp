@@ -11,6 +11,7 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 
 AFriendlyBaseTank::AFriendlyBaseTank()
@@ -38,7 +39,7 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 
 	TankRightTrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank Right Track Mesh"));
 	TankRightTrackMesh->SetupAttachment(TankHullSkeletalMesh);
-
+	
 	TankTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank Tower Mesh"));
 	TankTowerMesh->SetupAttachment(TankHullSkeletalMesh);
 
@@ -112,7 +113,16 @@ float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 		RightTrackAnimationSpeed = TankSpeedRate;
 	}
 
-	return RightTrackAnimationSpeed;
+	TankTrackRightPosition = TankTrackRightPosition +
+		((RightTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier) *
+		(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
+	
+	if (RightTankTrackDynamicMaterial)
+	{
+		RightTankTrackDynamicMaterial->SetScalarParameterValue("SlideValue", TankTrackRightPosition);
+	}
+	
+	return RightTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier;
 }
 
 float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
@@ -166,7 +176,16 @@ float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 		LeftTrackAnimationSpeed = 0;
 	}
 	
-	return LeftTrackAnimationSpeed;
+	TankTrackLeftPosition = TankTrackLeftPosition +
+		((LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier) *
+		(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
+
+	if (LeftTankTrackDynamicMaterial)
+	{
+		LeftTankTrackDynamicMaterial->SetScalarParameterValue("SlideValue", TankTrackLeftPosition);
+	}
+
+	return LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier;
 }
 
 void AFriendlyBaseTank::Move(float AxisValue)
@@ -261,15 +280,14 @@ void AFriendlyBaseTank::Fire()
 void AFriendlyBaseTank::BeginPlay()
 {
 	Super::BeginPlay();
-		
+	
+	CreateDynamicMaterialsInstancesForTankTracks();
 }
 
 void AFriendlyBaseTank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	
-
 	SetupTankOnGround();
 		
 	StorageActorRotation(TankRotationHistoryDepth);
@@ -481,4 +499,19 @@ float AFriendlyBaseTank::GetTankTurnRightForAnimation()
 	}
 	
 	return FinalResult;
+}
+
+void AFriendlyBaseTank::CreateDynamicMaterialsInstancesForTankTracks()
+{
+	RightTankTrackDynamicMaterial = UMaterialInstanceDynamic::Create(TankRightTrackMesh->GetMaterial(0),this);
+
+	if (RightTankTrackDynamicMaterial)
+	{
+		TankRightTrackMesh->SetMaterial(0, RightTankTrackDynamicMaterial);
+	}
+	LeftTankTrackDynamicMaterial = UMaterialInstanceDynamic::Create(TankLeftTrackMesh->GetMaterial(0), this);
+	if (LeftTankTrackDynamicMaterial)
+	{
+		TankLeftTrackMesh->SetMaterial(0, LeftTankTrackDynamicMaterial);
+	}
 }

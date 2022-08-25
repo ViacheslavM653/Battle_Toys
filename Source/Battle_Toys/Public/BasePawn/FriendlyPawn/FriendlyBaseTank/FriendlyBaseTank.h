@@ -131,6 +131,17 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
         float TankTrackAnimationSpeedMultiplier = 1;
+
+    /** Variable for store TrackRightPosition in Green channel (TexCoordiant) */
+    float TankTrackRightPosition = 0;
+    /** Variable for store TrackLeftPosition in Green channel (TexCoordiant) */
+    float TankTrackLeftPosition = 0;
+    /** Material for dynamic slide RightTankTrack TexCoordiant*/
+    UMaterialInstanceDynamic* RightTankTrackDynamicMaterial = nullptr;
+    /** Material for dynamic slide LeftTankTrack TexCoordiant*/
+    UMaterialInstanceDynamic* LeftTankTrackDynamicMaterial = nullptr;
+    
+    void CreateDynamicMaterialsInstancesForTankTracks();
       
     /** how many times need to storage TankRotation.Yaw to TankRotationHistoryArray */
     static const uint32 TankRotationHistoryDepth = 10;
