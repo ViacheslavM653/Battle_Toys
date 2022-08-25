@@ -261,8 +261,7 @@ void AFriendlyBaseTank::Fire()
 void AFriendlyBaseTank::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	KeepTankPositionOnGround();
+		
 }
 
 void AFriendlyBaseTank::Tick(float DeltaTime)
@@ -395,24 +394,6 @@ float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
 	FRotator FinalRotator = ActorRotation - GetActorRotation();
 
 	return FinalRotator.Roll;
-}
-
-void AFriendlyBaseTank::KeepTankPositionOnGround()
-{
-	FVector StartLocation = TankPivot->GetComponentLocation();
-	float DepthTracingValue = 300.f;
-	FHitResult OutHit = GetTracingResultByVisibility(StartLocation, DepthTracingValue);
-	float CorrectionValue = OutHit.Distance;
-
-	FVector NewActorSetupLocation = GetActorLocation();
-	NewActorSetupLocation.Z = NewActorSetupLocation.Z - CorrectionValue * 0.99;
-	NewActorSetupLocation.Z = FMath::FInterpTo(
-		StartLocation.Z,
-		NewActorSetupLocation.Z,
-		UGameplayStatics::GetWorldDeltaSeconds(this),
-		SuspensionHardness
-	);
-	SetActorLocation(NewActorSetupLocation);
 }
 
 FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)

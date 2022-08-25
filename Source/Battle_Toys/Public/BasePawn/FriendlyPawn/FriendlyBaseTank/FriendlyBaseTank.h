@@ -57,8 +57,7 @@ protected:
     virtual void TurnTankTowerToEnemy(FVector& LookAtTarget);
 
 private:
-    /**Calculated Position for Tank  and set on ground */
-    void KeepTankPositionOnGround();
+    
     /** AsyncLineTraceByChannel by Visibility
     * @param StartLocation - Location form start tracing;
     * @param DepthTracingValue - depth value. */
