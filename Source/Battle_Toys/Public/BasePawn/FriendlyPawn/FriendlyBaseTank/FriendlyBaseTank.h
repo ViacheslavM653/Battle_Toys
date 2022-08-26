@@ -9,6 +9,7 @@
 class UCapsuleComponent;
 class USkeletalMeshComponent;
 class UFloatingPawnMovement;
+class UNiagaraComponent;
 
 /**
  * BaseFrendlyTank class
@@ -29,6 +30,7 @@ public:
     /** Float value for animation rate (from -1 to 1) */
     UFUNCTION(BlueprintPure)
     float GetLeftWheelsAnimationSpeed();
+
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
@@ -73,42 +75,54 @@ private:
     /** Storage TankRotation.Yaw to TankRotationHistoryArray */
     void StorageActorRotation(int32 StorageDepth);
 
+    
+    float TankSpeedRateForAnimation;
     /**  Get Value TankSpeedRate (from 0 to 1) for amimation */
-    virtual float GetTankSpeedRateForAnimation();
+    virtual void GetTankSpeedRateForAnimation();
+    
+    float TankTurnRightForAnimation;
     /** Get Value TankTurnRate (from 0 to 1) for amimation */
-    virtual float GetTankTurnRightForAnimation();
+    virtual void GetTankTurnRightForAnimation();
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Component", meta = (AllowPrivateAccess = "true"))
+
+    //Creating Hirarchical Structure
+    UPROPERTY(VisibleAnywhere, Category = "Tank Component")
         UCapsuleComponent* CapsuleComponent;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Pivot", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank Pivot")
         USceneComponent* TankPivot;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank ForwardRightWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank ForwardRightWheel Sensor ")
         USceneComponent* ForwardRightWheelSensor;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank ForwardLeftWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank ForwardLeftWheel Sensor ")
         USceneComponent* ForwardLeftWheelSensor;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank BackwardRightWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank BackwardRightWheel Sensor ")
         USceneComponent* BackwardRightWheelSensor;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank BackwardLeftWheel Sensor ", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank BackwardLeftWheel Sensor ")
         USceneComponent* BackwardLeftWheelSensor;
 
     UPROPERTY(EditAnywhere, Category = "Tank Mesh")
         USkeletalMeshComponent* TankHullSkeletalMesh;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
+        UNiagaraComponent* RightExhaustNPS;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
+        UNiagaraComponent* LeftExhaustNPS;
+
+    UPROPERTY(VisibleAnywhere, Category = "Tank Mesh")
         UStaticMeshComponent* TankLeftTrackMesh;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank Mesh")
         UStaticMeshComponent* TankRightTrackMesh;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank Mesh")
         UStaticMeshComponent* TankTowerMesh;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
+    UPROPERTY(VisibleAnywhere,  Category = "Tank Mesh")
         UStaticMeshComponent* TankBarrelMesh;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
@@ -147,5 +161,33 @@ private:
     static const uint32 TankRotationHistoryDepth = 10;
      
     TStaticArray<FRotator, TankRotationHistoryDepth>TankRotationHistoryArray;
+
+    float RightWheelsAction;
+    float LeftWheelsAction;
+   
+    UPROPERTY(EditAnywhere, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
+        float ExhaustIdleVelocitySpeed = 300.f;
+
+    UPROPERTY(EditAnywhere, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
+        float ExhaustMaxVelocitySpeed = 900.f;
+
+    UPROPERTY(EditAnywhere, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
+        float ExhaustIdleSpawnRate = 60.f;
+
+    UPROPERTY(EditAnywhere, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
+        float ExhaustMaxSpawnRate = 600.f;
+
+    /** Dynamicly set parameters for RightExhaustNPS and LeftExhaustNPS 
+    * @param IdleVelocitySpeed - value when tank not move;
+    * @param IdleSpawnRate - value when tank mot move.
+    * @param MaxVelocitySpeed - value when tank move;
+    * @param MaxSpawnRate - value when tank move.
+    */
+    void SetTankExhaustNiagaraParticles(
+        float IdleVelocitySpeed, 
+        float IdleSpawnRate, 
+        float MaxVelocitySpeed, 
+        float MaxSpawnRate
+    );
    
 };

@@ -13,6 +13,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
+#include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
+
+
 
 AFriendlyBaseTank::AFriendlyBaseTank()
 {
@@ -33,6 +37,12 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 
 	TankHullSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Tank Hull SkeletalMesh"));
 	TankHullSkeletalMesh->SetupAttachment(TankPivot);
+
+	RightExhaustNPS = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Right Exhaust Niagara PS"));
+	RightExhaustNPS->SetupAttachment(TankHullSkeletalMesh);
+
+	LeftExhaustNPS = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Left Exhaust Niagara PS"));
+	LeftExhaustNPS->SetupAttachment(TankHullSkeletalMesh);
 
 	TankLeftTrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank Left Track Mesh"));
 	TankLeftTrackMesh->SetupAttachment(TankHullSkeletalMesh);
@@ -65,8 +75,9 @@ void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 {
 	float RightTrackAnimationSpeed = 0;
-	float TankSpeedRate = GetTankSpeedRateForAnimation();
-	float TankTurnRight = GetTankTurnRightForAnimation();
+	float TankSpeedRate = TankSpeedRateForAnimation;
+	float TankTurnRight = TankTurnRightForAnimation;
+	
 	//Tank not move
 	if (TankSpeedRate == 0 && TankTurnRight == 0)
 	{
@@ -112,6 +123,8 @@ float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 	{
 		RightTrackAnimationSpeed = TankSpeedRate;
 	}
+			
+	RightWheelsAction = RightTrackAnimationSpeed;
 
 	TankTrackRightPosition = TankTrackRightPosition +
 		((RightTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier) *
@@ -128,8 +141,8 @@ float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 {
 	float LeftTrackAnimationSpeed = 0;
-	float TankSpeedRate = GetTankSpeedRateForAnimation();
-	float TankTurnRight = GetTankTurnRightForAnimation();
+	float TankSpeedRate = TankSpeedRateForAnimation;
+	float TankTurnRight = TankTurnRightForAnimation;
 	//Tank not move
 	if (TankSpeedRate == 0 && TankTurnRight == 0)
 	{
@@ -176,6 +189,8 @@ float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 		LeftTrackAnimationSpeed = 0;
 	}
 	
+	LeftWheelsAction = LeftTrackAnimationSpeed;
+
 	TankTrackLeftPosition = TankTrackLeftPosition +
 		((LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier) *
 		(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
@@ -291,6 +306,12 @@ void AFriendlyBaseTank::Tick(float DeltaTime)
 	SetupTankOnGround();
 		
 	StorageActorRotation(TankRotationHistoryDepth);
+
+	GetTankSpeedRateForAnimation();
+
+	GetTankTurnRightForAnimation();
+
+	SetTankExhaustNiagaraParticles(ExhaustIdleVelocitySpeed, ExhaustIdleSpawnRate, ExhaustMaxVelocitySpeed, ExhaustMaxSpawnRate);
 		
 }
 
@@ -430,26 +451,29 @@ FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocatio
 	return OutHit;
 }
 
-float AFriendlyBaseTank::GetTankSpeedRateForAnimation()
+void AFriendlyBaseTank::GetTankSpeedRateForAnimation()
 {
 	// Find speed rate
-	FVector TankActorForwardVector = this->GetActorForwardVector();
+	FVector TankActorForwardVector = GetActorForwardVector();
 	FVector TankVelocity = this->GetVelocity();
 	float TankSpeedValue = TankVelocity.Length();
+
 	float TankSpeedRate = FMath::GetMappedRangeValueUnclamped(
-		FVector2D(0.f, MovementComponent->MaxSpeed),
-		FVector2D(0.f, 1.f),
-		TankSpeedValue
-		);
-	// Find speed sign
+			FVector2D(0.f, MovementComponent->MaxSpeed),
+			FVector2D(0.f, 1.f),
+			TankSpeedValue
+			);
+		// Find speed sign
 	float TankSpeedSign = TankVelocity.Y * TankActorForwardVector.Y;
 	if (TankSpeedSign != 0)
 	{
 		TankSpeedSign = TankSpeedSign / FMath::Abs(TankSpeedSign);
 		TankSpeedRate = TankSpeedRate * TankSpeedSign;
 	}
+		
+	TankSpeedRateForAnimation = TankSpeedRate;
+	
 
-	return TankSpeedRate;
 }
 
 void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
@@ -463,7 +487,7 @@ void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
 	TankRotationHistoryArray[StorageDepth - 1] = TankForwardVector.Rotation();
 }
 
-float AFriendlyBaseTank::GetTankTurnRightForAnimation()
+void AFriendlyBaseTank::GetTankTurnRightForAnimation()
 {
 	FRotator NewTankForwardRotation = GetActorForwardVector().Rotation();
 	//UE_LOG(LogTemp, Warning, TEXT("TankRotationHistoryArray[0]: %s"), TankRotationHistoryArray[0].ToString());
@@ -498,7 +522,7 @@ float AFriendlyBaseTank::GetTankTurnRightForAnimation()
 		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
 	}
 	
-	return FinalResult;
+	TankTurnRightForAnimation = FinalResult;
 }
 
 void AFriendlyBaseTank::CreateDynamicMaterialsInstancesForTankTracks()
@@ -513,5 +537,41 @@ void AFriendlyBaseTank::CreateDynamicMaterialsInstancesForTankTracks()
 	if (LeftTankTrackDynamicMaterial)
 	{
 		TankLeftTrackMesh->SetMaterial(0, LeftTankTrackDynamicMaterial);
+	}
+}
+
+void AFriendlyBaseTank::SetTankExhaustNiagaraParticles(
+	float IdleVelocitySpeed,
+	float IdleSpawnRate, 
+	float MaxVelocitySpeed, 
+	float MaxSpawnRate)
+{
+	if (RightWheelsAction != 0 || LeftWheelsAction != 0)
+	{
+		if (RightExhaustNPS)
+		{
+			RightExhaustNPS->SetNiagaraVariableFloat(FString("MaxVelocitySpeed"), MaxVelocitySpeed);
+			RightExhaustNPS->SetNiagaraVariableFloat(FString("SpawnRate"), MaxSpawnRate);
+		}
+		if (LeftExhaustNPS)
+		{
+			LeftExhaustNPS->SetNiagaraVariableFloat(FString("MaxVelocitySpeed"), MaxVelocitySpeed);
+			LeftExhaustNPS->SetNiagaraVariableFloat(FString("SpawnRate"), MaxSpawnRate);
+		}
+	
+	}
+	
+	else 
+	{
+		if (RightExhaustNPS)
+		{
+			RightExhaustNPS->SetNiagaraVariableFloat(FString("MaxVelocitySpeed"), IdleVelocitySpeed);
+			RightExhaustNPS->SetNiagaraVariableFloat(FString("SpawnRate"), IdleSpawnRate);
+		}
+		if (LeftExhaustNPS)
+		{
+			LeftExhaustNPS->SetNiagaraVariableFloat(FString("MaxVelocitySpeed"), IdleVelocitySpeed);
+			LeftExhaustNPS->SetNiagaraVariableFloat(FString("SpawnRate"), IdleSpawnRate);
+		}
 	}
 }
