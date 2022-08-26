@@ -12,6 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Components/AudioComponent.h"
 
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
@@ -43,6 +44,9 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 
 	LeftExhaustNPS = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Left Exhaust Niagara PS"));
 	LeftExhaustNPS->SetupAttachment(TankHullSkeletalMesh);
+	
+	TankIdleSoundComponent = UGameplayStatics::SpawnSoundAttached(TankIdleSound, RightExhaustNPS);
+	TankAccelerationSoundComponent = UGameplayStatics::SpawnSoundAttached(TankAccelerationSound, RightExhaustNPS);
 
 	TankLeftTrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank Left Track Mesh"));
 	TankLeftTrackMesh->SetupAttachment(TankHullSkeletalMesh);
@@ -297,6 +301,8 @@ void AFriendlyBaseTank::BeginPlay()
 	Super::BeginPlay();
 	
 	CreateDynamicMaterialsInstancesForTankTracks();
+
+	CreateExhaustSoundComponents();
 }
 
 void AFriendlyBaseTank::Tick(float DeltaTime)
@@ -310,6 +316,8 @@ void AFriendlyBaseTank::Tick(float DeltaTime)
 	GetTankSpeedRateForAnimation();
 
 	GetTankTurnRightForAnimation();
+
+	PlayExhaustSound();
 
 	SetTankExhaustNiagaraParticles(ExhaustIdleVelocitySpeed, ExhaustIdleSpawnRate, ExhaustMaxVelocitySpeed, ExhaustMaxSpawnRate);
 		
@@ -540,6 +548,20 @@ void AFriendlyBaseTank::CreateDynamicMaterialsInstancesForTankTracks()
 	}
 }
 
+void AFriendlyBaseTank::CreateExhaustSoundComponents()
+{
+	if (!TankAccelerationSoundComponent)
+	{
+		TankAccelerationSoundComponent = UGameplayStatics::SpawnSoundAttached(TankAccelerationSound, RightExhaustNPS);
+		TankAccelerationSoundComponent->FadeIn(2);
+	}
+	if (!TankIdleSoundComponent)
+	{
+		TankIdleSoundComponent = UGameplayStatics::SpawnSoundAttached(TankIdleSound, RightExhaustNPS);
+		TankIdleSoundComponent->FadeIn(2);		
+	}
+}
+
 void AFriendlyBaseTank::SetTankExhaustNiagaraParticles(
 	float IdleVelocitySpeed,
 	float IdleSpawnRate, 
@@ -574,4 +596,29 @@ void AFriendlyBaseTank::SetTankExhaustNiagaraParticles(
 			LeftExhaustNPS->SetNiagaraVariableFloat(FString("SpawnRate"), IdleSpawnRate);
 		}
 	}
+}
+
+void AFriendlyBaseTank::PlayExhaustSound()
+{
+	if (TankIdleSound && TankAccelerationSound)
+	{
+			
+		if (RightWheelsAction != 0 || LeftWheelsAction != 0)
+		{
+			TankIdleSoundComponent->SetPaused(true);
+			TankAccelerationSoundComponent->SetPaused(false);
+			//TankAccelerationSoundComponent->FadeIn(2);
+			//TankAccelerationSoundComponent->Play();
+		}
+		else
+		{
+			TankAccelerationSoundComponent->SetPaused(true);
+			TankIdleSoundComponent->SetPaused(false);
+			//TankIdleSoundComponent->FadeIn(1);
+			//TankIdleSoundComponent->Play();
+		}
+
+		
+	}
+		
 }

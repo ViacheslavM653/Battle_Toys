@@ -189,5 +189,17 @@ private:
         float MaxVelocitySpeed, 
         float MaxSpawnRate
     );
+
+    UPROPERTY(EditAnywhere, Category = "Exhaust Sound")
+    USoundBase* TankIdleSound;
+    UAudioComponent* TankIdleSoundComponent;
+
+    UPROPERTY(EditAnywhere, Category = "Exhaust Sound")
+    USoundBase* TankAccelerationSound;
+    UAudioComponent* TankAccelerationSoundComponent;
+
+    //FTimerHandle ExhaustSoundTimerHandle;
+    void CreateExhaustSoundComponents();
+    void PlayExhaustSound();
    
 };
