@@ -57,6 +57,7 @@ protected:
     * @param LookAtTarget - Enemy location
     */
     virtual void TurnTankTowerToEnemy(FVector& LookAtTarget);
+    //Creating Hirarchical Structure
 
 private:
     
@@ -85,10 +86,9 @@ private:
     virtual void GetTankTurnRightForAnimation();
 
 
-    //Creating Hirarchical Structure
     UPROPERTY(VisibleAnywhere, Category = "Tank Component")
         UCapsuleComponent* CapsuleComponent;
-
+    
     UPROPERTY(VisibleAnywhere,  Category = "Tank Pivot")
         USceneComponent* TankPivot;
 

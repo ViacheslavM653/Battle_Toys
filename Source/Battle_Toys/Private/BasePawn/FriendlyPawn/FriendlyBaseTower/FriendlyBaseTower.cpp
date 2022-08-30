@@ -21,7 +21,7 @@ AFriendlyBaseTower::AFriendlyBaseTower()
 	TowerBarrelMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tower Barrel Mesh"));
 	TowerBarrelMesh->SetupAttachment(TowerTowerMesh);
 
-	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Tower Barrel Mesh"));
+	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
 	ProjectileSpawnPoint->SetupAttachment(TowerBarrelMesh);
 }
 
