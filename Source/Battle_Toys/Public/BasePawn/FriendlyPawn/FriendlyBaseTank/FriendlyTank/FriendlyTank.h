@@ -30,8 +30,6 @@ protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
-private:
-
     AActor* TargetToShot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
@@ -39,4 +37,7 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     float FireRange = 500.f;
+private:
+
+
 };

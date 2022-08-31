@@ -29,10 +29,10 @@ public:
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
+    AActor* TargetToShot;
 
 private:
 
-    AActor* TargetToShot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         float SearchTargetRadius = 1000.f;
