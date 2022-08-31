@@ -19,19 +19,7 @@ public:
 	ABasePawn();
 	/** Triger for UHealthComponent->AddHealthFromUpgrade(float HealingValue) */
 	virtual void AddHealthFromUpgrade(float HealingValue);
-	/**Get float value ProjectileDamage */
-	float GetProjectileDamage();
-	/**Get float value ProjectileSpeed */
-	float GetProjectileSpeed();
-	/** Update float  value ProjectileDamage 
-	*Multiple ProjectileDamage by UpgradeProjectileDamageMultiplier
-	*/
-	virtual void SetUpgradeForProjectileDamage(float UpgradeProjectileDamageMultiplier);
-	/** Update float  value ProjectileSpeed
-	*Multiple ProjectileSpeed by UpgradeProjectileSpeedMultiplier
-	*/
-	virtual void SetUpgradeForProjectileSpeed(float UpgradeProjectileSpeedMultiplier);
-
+	
 
 protected:
 	// Called when the game starts or when spawned
@@ -58,11 +46,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	float ProjectileDamage = 30.f;
 	
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	float ProjectileSpeed = 1300.f;
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	UHealthComponent* HealthComponent;

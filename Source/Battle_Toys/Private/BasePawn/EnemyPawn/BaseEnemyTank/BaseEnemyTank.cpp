@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyBaseTank.h"
+#include "BasePawn/EnemyPawn/BaseEnemyTank/BaseEnemyTank.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -12,13 +12,12 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/AudioComponent.h"
+#include "DrawDebugHelpers.h"
 
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
-
-
-AFriendlyBaseTank::AFriendlyBaseTank()
+ABaseEnemyTank::ABaseEnemyTank()
 {
 	//Creating Hirarchical Structure
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
@@ -44,7 +43,7 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 
 	LeftExhaustNPS = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Left Exhaust Niagara PS"));
 	LeftExhaustNPS->SetupAttachment(TankHullSkeletalMesh);
-	
+
 	if (TankIdleSound)
 	{
 		TankIdleSoundComponent = UGameplayStatics::SpawnSoundAttached(TankIdleSound, RightExhaustNPS);
@@ -59,7 +58,7 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 
 	TankRightTrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank Right Track Mesh"));
 	TankRightTrackMesh->SetupAttachment(TankHullSkeletalMesh);
-	
+
 	TankTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank Tower Mesh"));
 	TankTowerMesh->SetupAttachment(TankHullSkeletalMesh);
 
@@ -72,22 +71,22 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Pawn Movement Component"));
 }
 
-void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABaseEnemyTank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AFriendlyBaseTank::Move);
-	PlayerInputComponent->BindAxis(TEXT("TurnRight"), this, &AFriendlyBaseTank::Turn);
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ABaseEnemyTank::Move);
+	PlayerInputComponent->BindAxis(TEXT("TurnRight"), this, &ABaseEnemyTank::Turn);
 
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AFriendlyBaseTank::Fire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ABaseEnemyTank::Fire);
 }
 
-float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
+float ABaseEnemyTank::GetRightWheelsAnimationSpeed()
 {
 	float RightTrackAnimationSpeed = 0;
 	float TankSpeedRate = TankSpeedRateForAnimation;
 	float TankTurnRight = TankTurnRightForAnimation;
-	
+
 	//Tank not move
 	if (TankSpeedRate == 0 && TankTurnRight == 0)
 	{
@@ -133,22 +132,22 @@ float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 	{
 		RightTrackAnimationSpeed = TankSpeedRate;
 	}
-			
+
 	RightWheelsAction = RightTrackAnimationSpeed;
 
 	TankTrackRightPosition = TankTrackRightPosition +
 		((RightTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier) *
-		(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
-	
+			(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
+
 	if (RightTankTrackDynamicMaterial)
 	{
 		RightTankTrackDynamicMaterial->SetScalarParameterValue("SlideValue", TankTrackRightPosition);
 	}
-	
+
 	return RightTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier;
 }
 
-float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
+float ABaseEnemyTank::GetLeftWheelsAnimationSpeed()
 {
 	float LeftTrackAnimationSpeed = 0;
 	float TankSpeedRate = TankSpeedRateForAnimation;
@@ -198,12 +197,12 @@ float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 	{
 		LeftTrackAnimationSpeed = 0;
 	}
-	
+
 	LeftWheelsAction = LeftTrackAnimationSpeed;
 
 	TankTrackLeftPosition = TankTrackLeftPosition +
 		((LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier) *
-		(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
+			(UGameplayStatics::GetWorldDeltaSeconds(this) * TankTrackAnimationSpeedMultiplier));
 
 	if (LeftTankTrackDynamicMaterial)
 	{
@@ -213,14 +212,14 @@ float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 	return LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier;
 }
 
-void AFriendlyBaseTank::Move(float AxisValue)
+void ABaseEnemyTank::Move(float AxisValue)
 {
 	MoveForwardValue = AxisValue;
 	AddMovementInput(FindMovementInputVector(AxisValue) * AxisValue);
 
 }
 
-FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
+FVector ABaseEnemyTank::FindMovementInputVector(float AxisValue)
 {
 	//Tracing to ground
 
@@ -265,7 +264,7 @@ FVector AFriendlyBaseTank::FindMovementInputVector(float AxisValue)
 	return MovementInputVector;
 }
 
-void AFriendlyBaseTank::Turn(float AxisValue)
+void ABaseEnemyTank::Turn(float AxisValue)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("TurnRight Axis Value: %f"), AxisValue);
 
@@ -289,7 +288,7 @@ void AFriendlyBaseTank::Turn(float AxisValue)
 	}
 }
 
-void AFriendlyBaseTank::Fire()
+void ABaseEnemyTank::Fire()
 {
 	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
 	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
@@ -302,21 +301,21 @@ void AFriendlyBaseTank::Fire()
 
 }
 
-void AFriendlyBaseTank::BeginPlay()
+void ABaseEnemyTank::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	CreateDynamicMaterialsInstancesForTankTracks();
 
 	CreateExhaustSoundComponents();
 }
 
-void AFriendlyBaseTank::Tick(float DeltaTime)
+void ABaseEnemyTank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	SetupTankOnGround();
-		
+
 	StorageActorRotation(TankRotationHistoryDepth);
 
 	GetTankSpeedRateForAnimation();
@@ -326,10 +325,10 @@ void AFriendlyBaseTank::Tick(float DeltaTime)
 	PlayExhaustSound();
 
 	SetTankExhaustNiagaraParticles(ExhaustIdleVelocitySpeed, ExhaustIdleSpawnRate, ExhaustMaxVelocitySpeed, ExhaustMaxSpawnRate);
-		
+
 }
 
-void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
+void ABaseEnemyTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TankPivot->GetComponentLocation();
 	FRotator TowerRelativeRotation = TankTowerMesh->GetRelativeRotation();;
@@ -343,12 +342,12 @@ void AFriendlyBaseTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
 		UGameplayStatics::GetWorldDeltaSeconds(this),
 		TurnTankTowerInterpolationSpeed
 	);
-		
+
 	TankTowerMesh->SetRelativeRotation(TargetDeltaRotator.Quaternion());
-	
+
 }
 
-void AFriendlyBaseTank::SetupTankOnGround()
+void ABaseEnemyTank::SetupTankOnGround()
 {
 	float DepthTracingValue = 300.f;
 
@@ -404,26 +403,26 @@ void AFriendlyBaseTank::SetupTankOnGround()
 			BackwardRightWheelSensorRoll +
 			BackwardLeftWheelSensorRoll) / 4
 		;
-		
+
 	FRotator ActorRotation = GetActorRotation();
 	FRotator TankPivotRelativeRotation = TankPivot->GetRelativeRotation();
-	
+
 	FRotator NeedDeltaRotator = FRotator(AveragePitch, 0.f, AverageRoll);
 	NeedDeltaRotator.Pitch = NeedDeltaRotator.Pitch - ActorRotation.Pitch;
 	NeedDeltaRotator.Roll = NeedDeltaRotator.Roll - ActorRotation.Roll;
 	FRotator NewRotation = NeedDeltaRotator;
-	
+
 	NewRotation = FMath::RInterpTo(
 		TankPivotRelativeRotation,
 		NewRotation,
 		UGameplayStatics::GetWorldDeltaSeconds(this),
 		SuspensionHardness
 	);
-	
+
 	TankPivot->SetRelativeRotation(NewRotation.Quaternion());
 }
 
-float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
+float ABaseEnemyTank::GetPitchFromHitNormal(FHitResult& HitResult)
 {
 	FVector XZPlaneNormal = GetActorRightVector();
 	FVector SensorNormalToXZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, XZPlaneNormal);
@@ -436,7 +435,7 @@ float AFriendlyBaseTank::GetPitchFromHitNormal(FHitResult& HitResult)
 	return FinalRotator.Pitch;
 }
 
-float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
+float ABaseEnemyTank::GetRollFromHitNormal(FHitResult& HitResult)
 {
 	FVector YZPlaneNormal = GetActorForwardVector();
 	FVector SensorNormalToYZ = FVector::VectorPlaneProject(HitResult.ImpactNormal, YZPlaneNormal);
@@ -449,7 +448,7 @@ float AFriendlyBaseTank::GetRollFromHitNormal(FHitResult& HitResult)
 	return FinalRotator.Roll;
 }
 
-FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
+FHitResult ABaseEnemyTank::GetTracingResultByVisibility(FVector& StartLocation, float& DepthTracingValue)
 {
 	FHitResult OutHit;
 	FVector Start = StartLocation;
@@ -465,7 +464,7 @@ FHitResult AFriendlyBaseTank::GetTracingResultByVisibility(FVector& StartLocatio
 	return OutHit;
 }
 
-void AFriendlyBaseTank::GetTankSpeedRateForAnimation()
+void ABaseEnemyTank::GetTankSpeedRateForAnimation()
 {
 	// Find speed rate
 	FVector TankActorForwardVector = GetActorForwardVector();
@@ -473,27 +472,27 @@ void AFriendlyBaseTank::GetTankSpeedRateForAnimation()
 	float TankSpeedValue = TankVelocity.Length();
 
 	float TankSpeedRate = FMath::GetMappedRangeValueUnclamped(
-			FVector2D(0.f, MovementComponent->MaxSpeed),
-			FVector2D(0.f, 1.f),
-			TankSpeedValue
-			);
-		// Find speed sign
+		FVector2D(0.f, MovementComponent->MaxSpeed),
+		FVector2D(0.f, 1.f),
+		TankSpeedValue
+	);
+	// Find speed sign
 	float TankSpeedSign = TankVelocity.Y * TankActorForwardVector.Y;
 	if (TankSpeedSign != 0)
 	{
 		TankSpeedSign = TankSpeedSign / FMath::Abs(TankSpeedSign);
 		TankSpeedRate = TankSpeedRate * TankSpeedSign;
 	}
-		
+
 	TankSpeedRateForAnimation = TankSpeedRate;
-	
+
 
 }
 
-void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
+void ABaseEnemyTank::StorageActorRotation(int32 StorageDepth)
 {
 	FVector TankForwardVector = GetActorForwardVector();
-	
+
 	for (int32 Cell = (StorageDepth - 1); Cell >= 1; Cell--)
 	{
 		TankRotationHistoryArray[Cell - 1] = TankRotationHistoryArray[Cell];
@@ -501,7 +500,7 @@ void AFriendlyBaseTank::StorageActorRotation(int32 StorageDepth)
 	TankRotationHistoryArray[StorageDepth - 1] = TankForwardVector.Rotation();
 }
 
-void AFriendlyBaseTank::GetTankTurnRightForAnimation()
+void ABaseEnemyTank::GetTankTurnRightForAnimation()
 {
 	FRotator NewTankForwardRotation = GetActorForwardVector().Rotation();
 	//UE_LOG(LogTemp, Warning, TEXT("TankRotationHistoryArray[0]: %s"), TankRotationHistoryArray[0].ToString());
@@ -518,7 +517,7 @@ void AFriendlyBaseTank::GetTankTurnRightForAnimation()
 			DeltaRotation.Yaw = DeltaRotation.Yaw + 360.f;
 		}
 	}
-	
+
 	float FinalResult = 0;
 	if (DeltaRotation.Yaw == 0)
 	{
@@ -528,20 +527,20 @@ void AFriendlyBaseTank::GetTankTurnRightForAnimation()
 	{
 		float InputMax = DeltaRotation.Yaw;
 		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, 1), DeltaRotation.Yaw);
-		
+
 	}
 	if (DeltaRotation.Yaw < 0)
 	{
 		float InputMax = DeltaRotation.Yaw;
 		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
 	}
-	
+
 	TankTurnRightForAnimation = FinalResult;
 }
 
-void AFriendlyBaseTank::CreateDynamicMaterialsInstancesForTankTracks()
+void ABaseEnemyTank::CreateDynamicMaterialsInstancesForTankTracks()
 {
-	RightTankTrackDynamicMaterial = UMaterialInstanceDynamic::Create(TankRightTrackMesh->GetMaterial(0),this);
+	RightTankTrackDynamicMaterial = UMaterialInstanceDynamic::Create(TankRightTrackMesh->GetMaterial(0), this);
 
 	if (RightTankTrackDynamicMaterial)
 	{
@@ -554,7 +553,7 @@ void AFriendlyBaseTank::CreateDynamicMaterialsInstancesForTankTracks()
 	}
 }
 
-void AFriendlyBaseTank::CreateExhaustSoundComponents()
+void ABaseEnemyTank::CreateExhaustSoundComponents()
 {
 	if (!TankAccelerationSoundComponent)
 	{
@@ -569,15 +568,15 @@ void AFriendlyBaseTank::CreateExhaustSoundComponents()
 		TankIdleSoundComponent = UGameplayStatics::SpawnSoundAttached(TankIdleSound, RightExhaustNPS);
 		if (TankIdleSoundComponent)
 		{
-			TankIdleSoundComponent->FadeIn(2);		
+			TankIdleSoundComponent->FadeIn(2);
 		}
 	}
 }
 
-void AFriendlyBaseTank::SetTankExhaustNiagaraParticles(
+void ABaseEnemyTank::SetTankExhaustNiagaraParticles(
 	float IdleVelocitySpeed,
-	float IdleSpawnRate, 
-	float MaxVelocitySpeed, 
+	float IdleSpawnRate,
+	float MaxVelocitySpeed,
 	float MaxSpawnRate)
 {
 	if (RightWheelsAction != 0 || LeftWheelsAction != 0)
@@ -592,10 +591,10 @@ void AFriendlyBaseTank::SetTankExhaustNiagaraParticles(
 			LeftExhaustNPS->SetNiagaraVariableFloat(FString("MaxVelocitySpeed"), MaxVelocitySpeed);
 			LeftExhaustNPS->SetNiagaraVariableFloat(FString("SpawnRate"), MaxSpawnRate);
 		}
-	
+
 	}
-	
-	else 
+
+	else
 	{
 		if (RightExhaustNPS)
 		{
@@ -610,11 +609,11 @@ void AFriendlyBaseTank::SetTankExhaustNiagaraParticles(
 	}
 }
 
-void AFriendlyBaseTank::PlayExhaustSound()
+void ABaseEnemyTank::PlayExhaustSound()
 {
 	if (TankIdleSound && TankAccelerationSound)
 	{
-			
+
 		if (RightWheelsAction != 0 || LeftWheelsAction != 0)
 		{
 			TankIdleSoundComponent->SetPaused(true);
@@ -630,7 +629,7 @@ void AFriendlyBaseTank::PlayExhaustSound()
 			//TankIdleSoundComponent->Play();
 		}
 
-		
+
 	}
-		
+
 }
