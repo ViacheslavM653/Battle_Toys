@@ -1,33 +1,34 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyBaseTower/FriendlyTower/FriendlyTower.h"
 #include "Kismet/GameplayStatics.h"
 #include "BasePawn/EnemyPawn/EnemyPawn.h"
 
-void AFriendlyTank::Tick(float DeltaTime)
+
+void AFriendlyTower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	FindClosestTarget();
 }
 
-void AFriendlyTank::BeginPlay()
+void AFriendlyTower::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-AActor* AFriendlyTank::FindClosestTarget()
+AActor* AFriendlyTower::FindClosestTarget()
 {
-		
+
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyPawn::StaticClass(), FoundActors);
 	TArray<AActor*> ActorsInSearchRange;
 
 	float CurrentMinDistance = SearchTargetRadius;
-	AActor* CurrentTargetActorForShoot =nullptr;
-	
-	
+	AActor* CurrentTargetActorForShoot = nullptr;
+
+
 	if (FoundActors.IsEmpty())
 	{
 		return nullptr;
@@ -35,19 +36,19 @@ AActor* AFriendlyTank::FindClosestTarget()
 	if (!FoundActors.IsEmpty())
 	{
 		for (int32 i = 0; i < FoundActors.Num(); i++)
-		{	
+		{
 			float distance = FVector::Dist(GetActorLocation(), FoundActors[i]->GetActorLocation());
-			
+
 			if (distance < SearchTargetRadius)
 			{
-				
+
 				if (distance < CurrentMinDistance)
 				{
 					CurrentMinDistance = distance;
 					CurrentTargetActorForShoot = FoundActors[i];
 				}
 			}
-			
+
 		}
 	}
 	if (CurrentTargetActorForShoot)
@@ -63,7 +64,7 @@ AActor* AFriendlyTank::FindClosestTarget()
 	return nullptr;
 }
 
-bool AFriendlyTank::bStartFire()
+bool AFriendlyTower::bStartFire()
 {
 	if (TargetToShot)
 	{
@@ -72,7 +73,7 @@ bool AFriendlyTank::bStartFire()
 		{
 			return true;
 		}
-		else 
+		else
 		{
 			return false;
 		}

@@ -34,10 +34,14 @@ void ABattleToysProjectile::BeginPlay()
 	// Get ProjectileDamage, ProjectileSpeed and setup for Projectile
 
 	ABasePawn* ProjectileOwner = Cast<ABasePawn>(GetOwner());
-	Damage = ProjectileOwner->GetProjectileDamage();
-	float ProjectileSpeed = ProjectileOwner->GetProjectileSpeed();
-	ProjectileMovementComponent->MaxSpeed = ProjectileSpeed;
-	ProjectileMovementComponent->InitialSpeed = ProjectileSpeed;
+	if (ProjectileOwner)
+	{
+		Damage = ProjectileOwner->GetProjectileDamage();
+		float ProjectileSpeed = ProjectileOwner->GetProjectileSpeed();
+		ProjectileMovementComponent->MaxSpeed = ProjectileSpeed;
+		ProjectileMovementComponent->InitialSpeed = ProjectileSpeed;
+	}
+	
 
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &ABattleToysProjectile::OnHit);
 
