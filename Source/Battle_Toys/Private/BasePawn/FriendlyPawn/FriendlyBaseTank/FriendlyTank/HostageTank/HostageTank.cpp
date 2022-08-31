@@ -9,7 +9,7 @@ void AHostageTank::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HostageFreeStatus = true;
+	HostageFreeStatus = false;
 }
 
 int32 AHostageTank::GetHostageID()
