@@ -4,6 +4,8 @@
 #include "HealthComponent/HealthComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "BattleToysGameMode/BattleToysGameMode.h"
+#include "BasePawn/FriendlyPawn/FriendlyPawn.h"
+#include "BasePawn/EnemyPawn/EnemyPawn.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -58,6 +60,7 @@ void UHealthComponent::DamageTaken(
 	AController* Instigator, 
 	AActor* DamageCauser)
 {
+
 	if (Damage <= 0.f)
 	{
 		return;

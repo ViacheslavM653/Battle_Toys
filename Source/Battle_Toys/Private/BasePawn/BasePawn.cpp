@@ -105,3 +105,4 @@ bool ABasePawn::IsPawnAlive()
 	return bPawnAlive;
 }
 
+

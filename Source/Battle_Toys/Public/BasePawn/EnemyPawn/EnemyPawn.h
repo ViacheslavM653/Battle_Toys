@@ -14,4 +14,5 @@ class BATTLE_TOYS_API AEnemyPawn : public ABasePawn
 {
 	GENERATED_BODY()
 	
+
 };

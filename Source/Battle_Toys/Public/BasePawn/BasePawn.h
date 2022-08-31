@@ -54,6 +54,8 @@ public:
 	/** Get bool value from @param bPawnAlive */
 	bool IsPawnAlive();
 
+	
+
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
@@ -65,11 +67,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Health")
 	UHealthComponent* HealthComponent;
 
+	
+
 private:
 	
 	/**Sratus Pawn: true / false */
 	bool bPawnAlive;
-	
 	
 
 
