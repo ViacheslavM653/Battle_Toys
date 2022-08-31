@@ -9,7 +9,7 @@
 
 
 
-void ABattle_ToysGameModeBase::PawnKilled(APawn* PawnKilled)
+void ABattle_ToysGameModeBase::PawnKilled(AActor* PawnKilled)
 {
 }
 

@@ -16,7 +16,7 @@ class BATTLE_TOYS_API ABattle_ToysGameModeBase : public AGameModeBase
 	
 public:
 
-	virtual void PawnKilled(APawn* PawnKilled);
+	virtual void PawnKilled(AActor* PawnKilled);
 
 protected:
 
