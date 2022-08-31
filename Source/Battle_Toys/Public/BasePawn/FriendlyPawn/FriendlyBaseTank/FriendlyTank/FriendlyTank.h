@@ -22,7 +22,7 @@ public:
     /** Find closest Enemy pawn and turn Tower to his location */
     virtual AActor* FindClosestTarget();
     /** Get condition for start Fire */
-    bool bStartFire();
+    virtual bool bStartFire();
 
 
 
