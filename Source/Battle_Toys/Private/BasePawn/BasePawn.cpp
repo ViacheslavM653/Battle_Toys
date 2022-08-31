@@ -60,6 +60,7 @@ void ABasePawn::BeginPlay()
 	bPawnAlive = true;
 }
 
+
 // Called every frame
 void ABasePawn::Tick(float DeltaTime)
 {

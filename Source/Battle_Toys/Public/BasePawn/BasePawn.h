@@ -40,6 +40,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<ABattleToysProjectile> ProjectileClass;
 
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -53,12 +54,7 @@ public:
 	/** Get bool value from @param bPawnAlive */
 	bool IsPawnAlive();
 
-private:
-	
-	/**Sratus Pawn: true / false */
-	bool bPawnAlive;
-	
-	
+protected:
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	float ProjectileDamage = 30.f;
@@ -68,6 +64,14 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	UHealthComponent* HealthComponent;
+
+private:
+	
+	/**Sratus Pawn: true / false */
+	bool bPawnAlive;
+	
+	
+
 
 	UPROPERTY(EditAnywhere, Category = "Death")
 	UParticleSystem* DeathParticles;

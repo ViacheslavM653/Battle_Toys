@@ -54,6 +54,7 @@ private:
 			const FHitResult& Hit
 		);
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
 	float Damage = 0.f;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")

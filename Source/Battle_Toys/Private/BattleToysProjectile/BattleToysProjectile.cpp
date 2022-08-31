@@ -31,18 +31,7 @@ ABattleToysProjectile::ABattleToysProjectile()
 void ABattleToysProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	// Get ProjectileDamage, ProjectileSpeed and setup for Projectile
-
-	ABasePawn* ProjectileOwner = Cast<ABasePawn>(GetOwner());
-	if (ProjectileOwner)
-	{
-		Damage = ProjectileOwner->GetProjectileDamage();
-		float ProjectileSpeed = ProjectileOwner->GetProjectileSpeed();
-		ProjectileMovementComponent->MaxSpeed = ProjectileSpeed;
-		ProjectileMovementComponent->InitialSpeed = ProjectileSpeed;
-	}
 	
-
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &ABattleToysProjectile::OnHit);
 
 	if (LaunchSound)
