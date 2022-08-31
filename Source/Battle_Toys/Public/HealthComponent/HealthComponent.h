@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-class ABattle_ToysGameModeBase;
+class ABattleToysGameMode;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -33,7 +33,7 @@ public:
 
 private:
 	/** Holder CurrentGameMode */
-	ABattle_ToysGameModeBase* BattleToysGameMode;
+	ABattleToysGameMode* BattleToysGameMode;
 
 	/** Value representing the pawn's current health */
 	float CurrentHealth;
