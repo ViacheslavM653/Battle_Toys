@@ -22,7 +22,7 @@ public:
 	void SetHealthUpgrade(float AddValue);
 
 	APlayerController* GetPlayerTankController() const;
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,4 +31,7 @@ private:
 	APlayerController* PlayerTankController;
 
 	void TankTowerControl();
+
+	UPROPERTY(EditAnywhere, Category = "Good Mod")
+		bool IsGoodMod = false;
 };

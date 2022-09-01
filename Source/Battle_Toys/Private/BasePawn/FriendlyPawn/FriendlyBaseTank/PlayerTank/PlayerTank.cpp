@@ -31,6 +31,11 @@ void APlayerTank::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	TankTowerControl();
+
+	if (IsGoodMod)
+	{
+		SetHealthUpgrade(100.f);
+	}
 }
 
 void APlayerTank::SetSpeedUpgrade(float Multiplier)
