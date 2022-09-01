@@ -59,6 +59,15 @@ protected:
     virtual void TurnTankTowerToEnemy(FVector& LookAtTarget);
     //Creating Hirarchical Structure
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+        float TankWheelAnimationSpeedMultiplier = 1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+        float TankTrackAnimationSpeedMultiplier = 1;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+        UFloatingPawnMovement* MovementComponent;
+
 private:
     
     /** AsyncLineTraceByChannel by Visibility
@@ -128,8 +137,6 @@ private:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
         USceneComponent* ProjectileSpawnPoint;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-        UFloatingPawnMovement* MovementComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnTankTowerInterpolationSpeed = 5.f;
@@ -140,11 +147,6 @@ private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnRate = 50.f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-        float TankWheelAnimationSpeedMultiplier = 1;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-        float TankTrackAnimationSpeedMultiplier = 1;
 
     /** Variable for store TrackRightPosition in Green channel (TexCoordiant) */
     float TankTrackRightPosition = 0;

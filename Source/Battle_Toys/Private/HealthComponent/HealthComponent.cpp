@@ -20,7 +20,7 @@ UHealthComponent::UHealthComponent()
 
 void UHealthComponent::AddHealthFromUpgrade(float HealingValue)
 {
-	if (HealingValue)
+	if (HealingValue > 0)
 	{
 		CurrentHealth += HealingValue;
 	}
@@ -28,8 +28,9 @@ void UHealthComponent::AddHealthFromUpgrade(float HealingValue)
 	{
 		CurrentHealth = MaxHealth;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Healing from Uppgrade! CurrentHealth: %f"), CurrentHealth);
+	
 }
+
 
 // Called when the game starts
 void UHealthComponent::BeginPlay()

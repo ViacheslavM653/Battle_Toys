@@ -70,6 +70,7 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 	ProjectileSpawnPoint->SetupAttachment(TankBarrelMesh);
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Floating Pawn Movement Component"));
+	
 }
 
 void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

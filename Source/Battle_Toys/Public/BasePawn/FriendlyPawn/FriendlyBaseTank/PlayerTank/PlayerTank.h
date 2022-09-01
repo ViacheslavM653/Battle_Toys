@@ -14,4 +14,19 @@ class BATTLE_TOYS_API APlayerTank : public AFriendlyBaseTank
 {
 	GENERATED_BODY()
 	
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void SetSpeedUpgrade(float Multiplier);
+	void SetHealthUpgrade(float AddValue);
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+	APlayerController* PlayerTankController;
+
+	void TankTowerControl();
 };

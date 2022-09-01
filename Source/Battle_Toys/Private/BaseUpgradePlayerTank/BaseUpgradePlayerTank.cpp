@@ -51,10 +51,7 @@ void ABaseUpgradePlayerTank::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
 	{
 		if (Cast<APlayerTank>(OtherActor))
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OVERLAPED!"));
-			}
+			
 			if (OverlapedParticles)
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(this, OverlapedParticles, GetActorLocation(), GetActorRotation());

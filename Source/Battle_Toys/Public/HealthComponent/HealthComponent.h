@@ -22,6 +22,7 @@ public:
 	* @param HealingValue - value received from UpgradeActor
 	*/
 	void AddHealthFromUpgrade(float HealingValue);
+		
 
 protected:
 	// Called when the game starts
@@ -36,6 +37,7 @@ private:
 	ABattleToysGameMode* BattleToysGameMode;
 
 	/** Value representing the pawn's current health */
+	UPROPERTY(VisibleAnywhere)
 	float CurrentHealth;
 
 	UPROPERTY(EditAnywhere, Category = "Health")
