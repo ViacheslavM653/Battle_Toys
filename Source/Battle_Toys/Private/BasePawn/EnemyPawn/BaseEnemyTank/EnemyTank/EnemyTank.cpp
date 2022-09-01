@@ -4,6 +4,8 @@
 #include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyTank.h"
 #include "Kismet/GameplayStatics.h"
 #include "BasePawn/FriendlyPawn/FriendlyPawn.h"
+#include "Kismet/GameplayStatics.h"
+#include "BaseUpgradePlayerTank/BaseUpgradePlayerTank.h"
 
 void AEnemyTank::Tick(float DeltaTime)
 {
@@ -81,5 +83,32 @@ bool AEnemyTank::bStartFire()
 	else
 	{
 		return false;
+	}
+}
+
+void AEnemyTank::HandleDestruction()
+{
+	if (DeathParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, DeathParticles, GetActorLocation(), GetActorRotation());
+	}
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
+	if (DeathCameraShakeClass)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(DeathCameraShakeClass);
+	}
+	FVector Location = GetActorLocation();
+	FRotator Rotation = GetActorRotation();
+	SetPawnDie();
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+	Destroy();
+	if (UpgradePlayerTankClass)
+	{
+		ABaseUpgradePlayerTank* UpgradeActor =  
+			GetWorld()->SpawnActor<ABaseUpgradePlayerTank>(AEnemyTank::UpgradePlayerTankClass, Location, Rotation);
 	}
 }

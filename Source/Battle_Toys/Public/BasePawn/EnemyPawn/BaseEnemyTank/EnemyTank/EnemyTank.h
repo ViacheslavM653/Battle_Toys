@@ -6,6 +6,8 @@
 #include "BasePawn/EnemyPawn/BaseEnemyTank/BaseEnemyTank.h"
 #include "EnemyTank.generated.h"
 
+class ABaseUpgradePlayerTank;
+
 /**
  * 
  */
@@ -22,6 +24,8 @@ public:
     virtual AActor* FindClosestTarget();
     /** Get condition for start Fire */
     virtual bool bStartFire();
+    //Pawn Destruction
+    virtual void HandleDestruction() override;
 
 
 
@@ -37,6 +41,10 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         float FireRange = 500.f;
 private:
+
+    UPROPERTY(EditAnywhere, Category = "UpgradePlayerTank")
+        TSubclassOf<ABaseUpgradePlayerTank> UpgradePlayerTankClass;
+
 
 
 };

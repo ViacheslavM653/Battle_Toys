@@ -36,7 +36,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//Pawn Destruction
-	void HandleDestruction();
+	virtual void HandleDestruction();
 	/** Set to: @param bPawnAlive - value "false" */
 	void SetPawnDie();
 	/** Get bool value from @param bPawnAlive */
@@ -45,27 +45,22 @@ public:
 	
 
 protected:
-
 	
-
 	UPROPERTY(EditAnywhere, Category = "Health")
 	UHealthComponent* HealthComponent;
-
-	
-
-private:
-	
-	/**Sratus Pawn: true / false */
-	bool bPawnAlive;
-	
-
 
 	UPROPERTY(EditAnywhere, Category = "Death")
 	UParticleSystem* DeathParticles;
 
 	UPROPERTY(EditAnywhere, Category = "Death")
 	USoundBase* DeathSound;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Death")
 	TSubclassOf<UCameraShakeBase> DeathCameraShakeClass;
+
+private:
+	
+	/**Sratus Pawn: true / false */
+	bool bPawnAlive;
+	
 };
