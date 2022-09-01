@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasePawn/FriendlyPawn/FriendlyBaseTower/FriendlyBaseTower.h"
+#include "BasePawn/EnemyPawn/BaseEnemyTower/BaseEnemyTower.h"
 #include "Components/CapsuleComponent.h"
 #include "BattleToysProjectile/BattleToysProjectile.h"
 #include "Kismet/GameplayStatics.h"
 
-AFriendlyBaseTower::AFriendlyBaseTower()
+ABaseEnemyTower::ABaseEnemyTower()
 {
 	//Creating Hirarchical Structure
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
 	CapsuleComponent->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
 	RootComponent = CapsuleComponent;
-	
+
 	TowerHullMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tower Hull Mesh"));
 	TowerHullMesh->SetupAttachment(CapsuleComponent);
 
@@ -26,17 +26,17 @@ AFriendlyBaseTower::AFriendlyBaseTower()
 	ProjectileSpawnPoint->SetupAttachment(TowerBarrelMesh);
 }
 
-void AFriendlyBaseTower::Tick(float DeltaTime)
+void ABaseEnemyTower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AFriendlyBaseTower::BeginPlay()
+void ABaseEnemyTower::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AFriendlyBaseTower::Fire()
+void ABaseEnemyTower::Fire()
 {
 	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
 	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
@@ -48,7 +48,7 @@ void AFriendlyBaseTower::Fire()
 
 }
 
-void AFriendlyBaseTower::TurnTankTowerToEnemy(FVector& LookAtTarget)
+void ABaseEnemyTower::TurnTankTowerToEnemy(FVector& LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TowerHullMesh->GetComponentLocation();
 	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
