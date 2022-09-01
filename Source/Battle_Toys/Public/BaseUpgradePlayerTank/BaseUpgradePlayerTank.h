@@ -23,13 +23,19 @@ protected:
 	virtual void BeginPlay() override;
 
 
+	UPROPERTY(EditAnywhere, Category = "Overlaped Sound")
+		USoundBase* OverlapedSound;
+
+	UPROPERTY(EditAnywhere, Category = "Overlaped Particles")
+		UParticleSystem* OverlapedParticles;
+
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Category = "Moving", BlueprintReadWrite)
-		bool ActivatedMovement;
+		bool ActivatedMovement = true;
 
 	UFUNCTION()
 		virtual void OnOverlapBegin(
@@ -62,10 +68,4 @@ private:
 	float GetDistanceMoved() const;
 
 	void RotatePlatform(float DeltaTime);
-
-	UPROPERTY(EditAnywhere, Category = "Overlaped Sound")
-		USoundBase* OverlapedSound;
-
-	UPROPERTY(EditAnywhere, Category = "Overlaped Particles")
-		UParticleSystem* OverlapedParticles;
 };
