@@ -8,6 +8,8 @@
 void APlayerTank::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerTankController = Cast<APlayerController>(GetController());
 }
 
 void APlayerTank::TankTowerControl()
@@ -47,4 +49,9 @@ void APlayerTank::SetHealthUpgrade(float AddValue)
 	{
 		HealthComponent->AddHealthFromUpgrade(AddValue);
 	}
+}
+
+APlayerController* APlayerTank::GetPlayerTankController() const
+{
+	return PlayerTankController;
 }

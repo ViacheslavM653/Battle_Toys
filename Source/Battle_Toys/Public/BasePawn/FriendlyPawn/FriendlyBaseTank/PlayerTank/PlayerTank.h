@@ -21,6 +21,8 @@ public:
 	void SetSpeedUpgrade(float Multiplier);
 	void SetHealthUpgrade(float AddValue);
 
+	APlayerController* GetPlayerTankController() const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
