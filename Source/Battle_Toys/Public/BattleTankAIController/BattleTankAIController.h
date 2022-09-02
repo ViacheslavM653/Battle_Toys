@@ -14,4 +14,14 @@ class BATTLE_TOYS_API ABattleTankAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+protected:
+
+	virtual void BeginPlay() override;
+
+
+private:
+
+	UPROPERTY(EditAnywhere)
+		class UBehaviorTree* AIBehavior;
+
 };

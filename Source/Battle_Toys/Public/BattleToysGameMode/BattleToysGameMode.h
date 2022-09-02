@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "BattleToysGameMode.generated.h"
 
+
 /**
  * 
  */
@@ -16,5 +17,12 @@ class BATTLE_TOYS_API ABattleToysGameMode : public AGameModeBase
 	
 public:
 
-	void ActorDied(AActor* DeadActor);
+	virtual void ActorDied(AActor* DeadActor);
+
+private:
+
+	class ABatleTankPlayerController* BatleTankPlayerController;
+
+	void EndGame(bool bIsPlayerWinner);
+
 };
