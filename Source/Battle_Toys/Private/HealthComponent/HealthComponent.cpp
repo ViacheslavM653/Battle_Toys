@@ -68,7 +68,7 @@ void UHealthComponent::DamageTaken(
 	}
 
 	CurrentHealth -= Damage;
-	UE_LOG(LogTemp, Warning, TEXT("CurrentHealth: %f"), CurrentHealth);
+	
 	if (CurrentHealth <= 0.f)
 	{
 		BattleToysGameMode = GetWorld()->GetAuthGameMode<ABattleToysGameMode>();

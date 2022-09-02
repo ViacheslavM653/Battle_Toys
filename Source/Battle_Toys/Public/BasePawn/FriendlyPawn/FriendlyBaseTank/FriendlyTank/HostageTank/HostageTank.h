@@ -34,7 +34,7 @@ protected:
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Hostage Data")
+	UPROPERTY(EditAnywhere, Category = "HostageID")
 		int32 HostageID = 0;
 
 	bool HostageFreeStatus;
