@@ -13,5 +13,9 @@ UCLASS()
 class BATTLE_TOYS_API ABatleTankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
+
+	virtual void BeginPlay() override;
 	
 };

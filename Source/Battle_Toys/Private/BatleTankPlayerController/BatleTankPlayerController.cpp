@@ -3,3 +3,8 @@
 
 #include "BatleTankPlayerController/BatleTankPlayerController.h"
 
+void ABatleTankPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
