@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "BatleTankPlayerController.generated.h"
 
+
+class UUserWidget;
 /**
  * 
  */
@@ -14,8 +16,27 @@ class BATTLE_TOYS_API ABatleTankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
+	virtual void GameHasEnded(AActor* EndGameFocus, bool bIsWinner) override;
+
+	void SetPlayerEnabledState(bool bPlayerEnabled);
+
 protected:
 
 	virtual void BeginPlay() override;
+
+private:
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> HUDClass;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> WinSceenClass;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UUserWidget> LoseScreenClass;
+
+	UPROPERTY()
+		UUserWidget* HUD;
 	
 };

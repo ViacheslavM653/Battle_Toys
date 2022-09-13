@@ -52,6 +52,7 @@ void ABattleToysGameMode::ActorDied(AActor* DeadActor)
 	//Check IsAlive  all enemies
 	TArray<AActor*> FoundAllEmenyes;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyPawn::StaticClass(), FoundAllEmenyes);
+
 	if (!FoundAllEmenyes.Num())
 	{
 		EndGame(true);

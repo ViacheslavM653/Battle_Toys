@@ -5,9 +5,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+
 void ABattleTankAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 
 	if (AIBehavior != nullptr)
 	{
