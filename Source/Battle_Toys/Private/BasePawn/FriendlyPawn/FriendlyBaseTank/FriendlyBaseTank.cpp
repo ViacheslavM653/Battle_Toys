@@ -81,6 +81,7 @@ void AFriendlyBaseTank::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis(TEXT("TurnRight"), this, &AFriendlyBaseTank::Turn);
 
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AFriendlyBaseTank::Fire);
+	
 }
 
 float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()

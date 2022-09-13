@@ -4,12 +4,47 @@
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "HealthComponent/HealthComponent.h"
+#include "BattleToysProjectile/BattleToysProjectile.h"
+#include "TimerManager.h"
 
 void APlayerTank::BeginPlay()
 {
 	Super::BeginPlay();
 
 	PlayerTankController = Cast<APlayerController>(GetController());
+}
+
+void APlayerTank::Fire()
+{
+	ActuallyFire(FireStatus);
+	if (FireStatus)
+	{
+		FireStatus = false;
+		GetWorldTimerManager().SetTimer(FireTimerHandle, this, &APlayerTank::SetFirePermission, ShotInverval);
+	}
+	
+	
+
+}
+
+void APlayerTank::ActuallyFire(bool FirePermission)
+{
+	if (FirePermission)
+	{
+		FVector Location = ProjectileSpawnPoint->GetComponentLocation();
+		FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
+		if (ProjectileClass)
+		{
+			ABattleToysProjectile* Projectile = GetWorld()->SpawnActor<ABattleToysProjectile>(ABasePawn::ProjectileClass, Location, Rotation);
+			Projectile->SetOwner(this);
+		}
+	}
+	
+}
+
+void APlayerTank::SetFirePermission()
+{
+	FireStatus = true;
 }
 
 void APlayerTank::TankTowerControl()

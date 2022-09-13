@@ -42,7 +42,7 @@ protected:
     virtual void SetupTankOnGround();
 
     /** Spawn Projectile and Produce Shot  */
-    void Fire();
+    virtual void Fire();
 
     /** Move Tank by PlayerInput */
     void Move(float AxisValue);
@@ -67,6 +67,10 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         UFloatingPawnMovement* MovementComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
+        USceneComponent* ProjectileSpawnPoint;
+
 
 private:
     
@@ -133,9 +137,6 @@ private:
 
     UPROPERTY(VisibleAnywhere,  Category = "Tank Mesh")
         UStaticMeshComponent* TankBarrelMesh;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tank Mesh", meta = (AllowPrivateAccess = "true"))
-        USceneComponent* ProjectileSpawnPoint;
 
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
