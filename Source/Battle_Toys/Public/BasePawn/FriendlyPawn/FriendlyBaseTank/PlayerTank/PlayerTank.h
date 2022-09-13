@@ -22,6 +22,10 @@ public:
 	void SetHealthUpgrade(float AddValue);
 
 	APlayerController* GetPlayerTankController() const;
+	/* */
+	UFUNCTION(BlueprintPure)
+		float ReloadRate();
+
 	
 protected:
 	// Called when the game starts or when spawned
@@ -45,6 +49,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 		float ShotInverval = 1.f;
+
+	float ReloadSubtractionDelta;
+	float ReloadRateStatus;
 
 	bool FireStatus = true;
 

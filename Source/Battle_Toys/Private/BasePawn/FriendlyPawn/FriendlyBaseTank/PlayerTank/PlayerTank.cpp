@@ -21,10 +21,43 @@ void APlayerTank::Fire()
 	{
 		FireStatus = false;
 		GetWorldTimerManager().SetTimer(FireTimerHandle, this, &APlayerTank::SetFirePermission, ShotInverval);
+		float TimeRemaning = FMath::RoundToInt(ShotInverval / GetWorld()->GetDeltaSeconds());
+		ReloadSubtractionDelta = 1/ TimeRemaning;
+		ReloadRateStatus = 1.f;
+			
 	}
 	
 	
 
+}
+
+float APlayerTank::ReloadRate()
+{
+	int32 TimeRemaning = FMath::RoundToInt(ShotInverval / GetWorld()->GetDeltaSeconds());
+	if (FireStatus)
+	{
+		return ReloadRateStatus = 0.0f;
+	}
+	if (!FireStatus)
+	{
+		if (ReloadRateStatus >= 0)
+		{
+			ReloadRateStatus -= ReloadSubtractionDelta;
+		}
+		if (ReloadRateStatus < 0)
+		{
+			ReloadRateStatus = 0.0f;
+		}
+		
+		
+
+	}
+	else
+	{
+		return 0.0f;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("ReloadRateStatus : %f"), ReloadRateStatus);
+	
 }
 
 void APlayerTank::ActuallyFire(bool FirePermission)
@@ -41,6 +74,7 @@ void APlayerTank::ActuallyFire(bool FirePermission)
 	}
 	
 }
+
 
 void APlayerTank::SetFirePermission()
 {
@@ -66,6 +100,8 @@ void APlayerTank::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	TankTowerControl();
+
+	ReloadRate();
 
 	if (IsGoodMod)
 	{
@@ -95,3 +131,4 @@ APlayerController* APlayerTank::GetPlayerTankController() const
 {
 	return PlayerTankController;
 }
+
