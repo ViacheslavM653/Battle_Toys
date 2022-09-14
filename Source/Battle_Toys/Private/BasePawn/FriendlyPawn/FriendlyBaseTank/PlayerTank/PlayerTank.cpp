@@ -42,7 +42,7 @@ float APlayerTank::ReloadRate()
 	{
 		if (ReloadRateStatus >= 0)
 		{
-			ReloadRateStatus += ReloadSubtractionDelta / 2;
+			ReloadRateStatus += ReloadSubtractionDelta;
 		}
 		if (ReloadRateStatus > 1)
 		{
