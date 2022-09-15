@@ -31,6 +31,8 @@ public:
     UFUNCTION(BlueprintPure)
     float GetLeftWheelsAnimationSpeed();
 
+    /** Spawn Projectile and Produce Shot  */
+    virtual void Fire();
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
@@ -41,8 +43,6 @@ protected:
     /** Funcrion for rotation Tank Hull by terain */
     virtual void SetupTankOnGround();
 
-    /** Spawn Projectile and Produce Shot  */
-    virtual void Fire();
 
     /** Move Tank by PlayerInput */
     void Move(float AxisValue);
