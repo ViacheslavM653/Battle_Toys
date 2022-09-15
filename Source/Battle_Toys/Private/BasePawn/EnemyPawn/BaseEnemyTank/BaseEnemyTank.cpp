@@ -212,6 +212,24 @@ float ABaseEnemyTank::GetLeftWheelsAnimationSpeed()
 	return LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier;
 }
 
+void ABaseEnemyTank::TurnActorToTarget(FVector TargetLocation)
+{
+	FVector ToTarget = TargetLocation - GetActorLocation();
+	FVector ToTargetProgectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
+	FRotator TargetRotator = FMath::RInterpTo(
+		GetActorRotation(),
+		ToTargetProgectedXY.Rotation(),
+		UGameplayStatics::GetWorldDeltaSeconds(this),
+		TurnTankInterpolationSpeed
+	);
+	SetActorRotation(TargetRotator.Quaternion());
+}
+
+float ABaseEnemyTank::GetTurnTankInterpolationSpeed()
+{
+	return TurnTankInterpolationSpeed;
+}
+
 void ABaseEnemyTank::Move(float AxisValue)
 {
 	MoveForwardValue = AxisValue;

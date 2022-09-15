@@ -33,7 +33,10 @@ public:
     /** Float value for animation rate (from -1 to 1) */
     UFUNCTION(BlueprintPure)
         float GetLeftWheelsAnimationSpeed();
+    /** Function for AiController*/
+    void TurnActorToTarget(FVector TargetLocation);
 
+    float GetTurnTankInterpolationSpeed();
 
     // Called every frame
     virtual void Tick(float DeltaTime) override;
@@ -136,6 +139,9 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnTankTowerInterpolationSpeed = 5.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+        float TurnTankInterpolationSpeed = 5.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float SuspensionHardness = 10.f;
