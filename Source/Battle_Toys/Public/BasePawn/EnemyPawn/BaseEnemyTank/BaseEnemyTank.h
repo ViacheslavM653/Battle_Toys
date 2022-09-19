@@ -35,6 +35,8 @@ public:
         float GetLeftWheelsAnimationSpeed();
     /** Function for AiController*/
     void TurnActorToTarget(FVector TargetLocation);
+    /** TurnActor if Velocity magnitude > 0*/
+    void TurnActorAccordingToVelocity();
 
     float GetTurnTankInterpolationSpeed();
 

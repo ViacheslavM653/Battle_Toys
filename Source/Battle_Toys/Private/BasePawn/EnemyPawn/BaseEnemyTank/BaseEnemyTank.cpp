@@ -14,6 +14,7 @@
 #include "Components/AudioComponent.h"
 #include "DrawDebugHelpers.h"
 
+
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
@@ -85,7 +86,7 @@ float ABaseEnemyTank::GetRightWheelsAnimationSpeed()
 {
 	float RightTrackAnimationSpeed = 0;
 	float TankSpeedRate = TankSpeedRateForAnimation;
-	float TankTurnRight = TankTurnRightForAnimation;
+	float TankTurnRight = TankTurnRightForAnimation; 
 
 	//Tank not move
 	if (TankSpeedRate == 0 && TankTurnRight == 0)
@@ -107,8 +108,13 @@ float ABaseEnemyTank::GetRightWheelsAnimationSpeed()
 	{
 		RightTrackAnimationSpeed = TankSpeedRate;
 	}
-	//Tank move forward and turn right
+	//Tank move forward and turn right before threshold
 	if (TankSpeedRate > 0 && TankTurnRight > 0)
+	{
+		RightTrackAnimationSpeed = 1;
+	}
+	//Tank move forward and turn right affter threshold
+	if (TankSpeedRate > 0 && TankTurnRight > 0.1)
 	{
 		RightTrackAnimationSpeed = 0;
 	}
@@ -177,8 +183,13 @@ float ABaseEnemyTank::GetLeftWheelsAnimationSpeed()
 	{
 		LeftTrackAnimationSpeed = TankSpeedRate;
 	}
-	//Tank move forward and turn left
+	//Tank move forward and turn left before  threshold
 	if (TankSpeedRate > 0 && TankTurnRight < 0)
+	{
+		LeftTrackAnimationSpeed = 1;
+	}
+	//Tank move forward and turn left affter threshold
+	if (TankSpeedRate > 0 && TankTurnRight < -0.1)
 	{
 		LeftTrackAnimationSpeed = 0;
 	}
@@ -223,6 +234,22 @@ void ABaseEnemyTank::TurnActorToTarget(FVector TargetLocation)
 		TurnTankInterpolationSpeed
 	);
 	SetActorRotation(TargetRotator.Quaternion());
+}
+
+void ABaseEnemyTank::TurnActorAccordingToVelocity()
+{
+	FVector Velocity = GetVelocity();
+	if (Velocity.Length() > 0)
+	{
+		FRotator TargetRotator = FMath::RInterpTo(
+				GetActorRotation(),
+				Velocity.Rotation(),
+				UGameplayStatics::GetWorldDeltaSeconds(this),
+				TurnTankInterpolationSpeed
+	);
+	SetActorRotation(TargetRotator);
+	}
+	
 }
 
 float ABaseEnemyTank::GetTurnTankInterpolationSpeed()
@@ -344,6 +371,9 @@ void ABaseEnemyTank::Tick(float DeltaTime)
 
 	SetTankExhaustNiagaraParticles(ExhaustIdleVelocitySpeed, ExhaustIdleSpawnRate, ExhaustMaxVelocitySpeed, ExhaustMaxSpawnRate);
 
+	FVector Velocity = GetVelocity();
+
+	DrawDebugCoordinateSystem(GetWorld(), GetActorLocation(), Velocity.Rotation(), 300);
 }
 
 void ABaseEnemyTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
@@ -501,7 +531,7 @@ void ABaseEnemyTank::GetTankSpeedRateForAnimation()
 		TankSpeedSign = TankSpeedSign / FMath::Abs(TankSpeedSign);
 		TankSpeedRate = TankSpeedRate * TankSpeedSign;
 	}
-
+	
 	TankSpeedRateForAnimation = TankSpeedRate;
 
 
@@ -544,15 +574,17 @@ void ABaseEnemyTank::GetTankTurnRightForAnimation()
 	if (DeltaRotation.Yaw > 0)
 	{
 		float InputMax = DeltaRotation.Yaw;
-		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, 1), DeltaRotation.Yaw);
+		//FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, 1), DeltaRotation.Yaw);
+		FinalResult = InputMax;
 
 	}
 	if (DeltaRotation.Yaw < 0)
 	{
 		float InputMax = DeltaRotation.Yaw;
-		FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
+		//FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
+		FinalResult = InputMax;
 	}
-
+	UE_LOG(LogTemp, Warning, TEXT("TankTurnRightForAnimation() : %f"), FinalResult);
 	TankTurnRightForAnimation = FinalResult;
 }
 
