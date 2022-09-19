@@ -35,14 +35,14 @@ void UBTS_ET_TargetLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp, u
             if (OwnerComp.GetAIOwner()->LineOfSightTo(TargetActor))
             {
                 OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), TargetActor);
+            } 
+            else
+            {
+                    OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
             }
         }
-
         
     }
-    else
-    {
-        OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
-    }
+   
 
 }
