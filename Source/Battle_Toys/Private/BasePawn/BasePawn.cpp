@@ -67,7 +67,7 @@ void ABasePawn::HandleDestruction()
 	SetPawnDie();
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
-	Destroy();
+	//Destroy();
 }
 
 void ABasePawn::SetPawnDie()

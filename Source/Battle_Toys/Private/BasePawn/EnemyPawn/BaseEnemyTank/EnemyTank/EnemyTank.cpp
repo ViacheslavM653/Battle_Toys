@@ -6,6 +6,8 @@
 #include "BasePawn/FriendlyPawn/FriendlyPawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseUpgradePlayerTank/BaseUpgradePlayerTank.h"
+#include "BasePawn/BasePawn.h"
+#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/HostageTank/HostageTank.h"
 
 void AEnemyTank::Tick(float DeltaTime)
 {
@@ -22,10 +24,25 @@ void AEnemyTank::BeginPlay()
 AActor* AEnemyTank::FindClosestTarget()
 {
 
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyPawn::StaticClass(), FoundActors);
-	TArray<AActor*> ActorsInSearchRange;
+	TArray<AActor*> AllFoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyPawn::StaticClass(), AllFoundActors);
+	
 
+	TArray<AActor*> FoundActors;
+	for (int32 i = 0; i < AllFoundActors.Num(); i++)
+	{
+		if (!Cast<AHostageTank>(AllFoundActors[i]))
+		{
+			FoundActors.Add(AllFoundActors[i]);
+		}
+		if (Cast<AHostageTank>(AllFoundActors[i]))
+		{
+			if (Cast<AHostageTank>(AllFoundActors[i])->GetHostageFreeStatus())
+			{
+				FoundActors.Add(AllFoundActors[i]);
+			}
+		}
+	}
 	float CurrentMinDistance = SearchTargetRadius;
 	AActor* CurrentTargetActorForShoot = nullptr;
 
@@ -42,8 +59,8 @@ AActor* AEnemyTank::FindClosestTarget()
 
 			if (distance < SearchTargetRadius)
 			{
-
-				if (distance < CurrentMinDistance)
+				
+				if (distance < CurrentMinDistance )
 				{
 					CurrentMinDistance = distance;
 					CurrentTargetActorForShoot = FoundActors[i];
@@ -56,16 +73,37 @@ AActor* AEnemyTank::FindClosestTarget()
 	{
 		TargetToShot = CurrentTargetActorForShoot;
 		FVector TargetToTurn = CurrentTargetActorForShoot->GetActorLocation();
+		
+
 		TurnTankTowerToEnemy(TargetToTurn);
+
 		float distance = FVector::Dist(GetActorLocation(), CurrentTargetActorForShoot->GetActorLocation());
-		if (distance < FireRange)
+		if (Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
 		{
-			ShoodFire = true;
+			if (distance < FireRange)
+			{
+				ShoodFire = true;
+			}
+			if (distance > FireRange)
+			{
+				ShoodFire = false;
+			}
+			if (Cast<AHostageTank>(CurrentTargetActorForShoot))
+			{
+				if (!Cast<AHostageTank>(CurrentTargetActorForShoot)->GetHostageFreeStatus())
+				{
+					ShoodFire = false;
+
+				}
+			}
+
 		}
-		if (distance > FireRange)
+		if (!Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive()) 
 		{
 			ShoodFire = false;
+			
 		}
+
 		return CurrentTargetActorForShoot;
 	}
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();

@@ -26,6 +26,8 @@ public:
 	UFUNCTION(BlueprintPure)
 		float ReloadRate();
 
+	virtual void HandleDestruction() override;
+
 	
 protected:
 	// Called when the game starts or when spawned

@@ -22,6 +22,8 @@ public:
 
 	void SetFreeHostage();
 
+	bool GetHostageFreeStatus();
+
 	/** Find closest Enemy pawn and turn Tower to his location */
 	virtual AActor* FindClosestTarget() override;
 	/** Get condition for start Fire */

@@ -6,6 +6,7 @@
 #include "HealthComponent/HealthComponent.h"
 #include "BattleToysProjectile/BattleToysProjectile.h"
 #include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 void APlayerTank::BeginPlay()
 {
@@ -57,6 +58,27 @@ float APlayerTank::ReloadRate()
 	
 	return ReloadRateStatus;
 		
+}
+
+void APlayerTank::HandleDestruction()
+{
+
+	if (DeathParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, DeathParticles, GetActorLocation(), GetActorRotation());
+	}
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
+	if (DeathCameraShakeClass)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(DeathCameraShakeClass);
+	}
+	SetPawnDie();
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+	//Destroy();
 }
 
 void APlayerTank::ActuallyFire(bool FirePermission)

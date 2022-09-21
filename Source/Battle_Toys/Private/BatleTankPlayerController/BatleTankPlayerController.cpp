@@ -43,6 +43,11 @@ void ABatleTankPlayerController::GameHasEnded(AActor* EndGameFocus, bool bIsWinn
 		if (LosseScreen != nullptr)
 		{
 			SetPlayerEnabledState(bIsWinner);
+			if (HUD != nullptr)
+			{
+				HUD->RemoveFromViewport();
+			}
+			bShowMouseCursor = false;
 			LosseScreen->AddToViewport();
 		}
 	}

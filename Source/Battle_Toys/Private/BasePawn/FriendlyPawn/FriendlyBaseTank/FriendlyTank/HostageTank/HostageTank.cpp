@@ -22,6 +22,11 @@ void AHostageTank::SetFreeHostage()
 	HostageFreeStatus = true;
 }
 
+bool AHostageTank::GetHostageFreeStatus()
+{
+	return HostageFreeStatus;
+}
+
 AActor* AHostageTank::FindClosestTarget()
 {
 	if (HostageFreeStatus)
