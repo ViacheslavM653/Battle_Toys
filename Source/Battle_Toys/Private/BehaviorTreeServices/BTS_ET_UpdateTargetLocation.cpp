@@ -32,6 +32,10 @@ void UBTS_ET_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
         {
             OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), TargetActor->GetActorLocation());
         }
+        else
+        {
+            return;
+        }
         
        
     }

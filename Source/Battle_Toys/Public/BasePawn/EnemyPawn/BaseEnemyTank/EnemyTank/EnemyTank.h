@@ -27,6 +27,8 @@ public:
     //Pawn Destruction
     virtual void HandleDestruction() override;
 
+    bool IsReadyForFire();
+
 
 
 protected:
@@ -40,6 +42,8 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         float FireRange = 500.f;
+
+    bool ShoodFire = false;
 private:
 
     UPROPERTY(EditAnywhere, Category = "UpgradePlayerTank")

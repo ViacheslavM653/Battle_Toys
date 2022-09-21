@@ -371,9 +371,7 @@ void ABaseEnemyTank::Tick(float DeltaTime)
 
 	SetTankExhaustNiagaraParticles(ExhaustIdleVelocitySpeed, ExhaustIdleSpawnRate, ExhaustMaxVelocitySpeed, ExhaustMaxSpawnRate);
 
-	FVector Velocity = GetVelocity();
-
-	DrawDebugCoordinateSystem(GetWorld(), GetActorLocation(), Velocity.Rotation(), 300);
+	
 }
 
 void ABaseEnemyTank::TurnTankTowerToEnemy(FVector& LookAtTarget)
@@ -584,7 +582,7 @@ void ABaseEnemyTank::GetTankTurnRightForAnimation()
 		//FinalResult = FMath::GetMappedRangeValueUnclamped(FVector2D(0, InputMax), FVector2D(0, -1), DeltaRotation.Yaw);
 		FinalResult = InputMax;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("TankTurnRightForAnimation() : %f"), FinalResult);
+	//UE_LOG(LogTemp, Warning, TEXT("TankTurnRightForAnimation() : %f"), FinalResult);
 	TankTurnRightForAnimation = FinalResult;
 }
 

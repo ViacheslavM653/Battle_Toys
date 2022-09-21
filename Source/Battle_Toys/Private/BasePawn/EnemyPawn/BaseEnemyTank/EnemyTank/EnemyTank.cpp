@@ -57,6 +57,15 @@ AActor* AEnemyTank::FindClosestTarget()
 		TargetToShot = CurrentTargetActorForShoot;
 		FVector TargetToTurn = CurrentTargetActorForShoot->GetActorLocation();
 		TurnTankTowerToEnemy(TargetToTurn);
+		float distance = FVector::Dist(GetActorLocation(), CurrentTargetActorForShoot->GetActorLocation());
+		if (distance < FireRange)
+		{
+			ShoodFire = true;
+		}
+		if (distance > FireRange)
+		{
+			ShoodFire = false;
+		}
 		return CurrentTargetActorForShoot;
 	}
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
@@ -111,4 +120,9 @@ void AEnemyTank::HandleDestruction()
 		ABaseUpgradePlayerTank* UpgradeActor =  
 			GetWorld()->SpawnActor<ABaseUpgradePlayerTank>(AEnemyTank::UpgradePlayerTankClass, Location, Rotation);
 	}
+}
+
+bool AEnemyTank::IsReadyForFire()
+{
+	return ShoodFire;
 }
