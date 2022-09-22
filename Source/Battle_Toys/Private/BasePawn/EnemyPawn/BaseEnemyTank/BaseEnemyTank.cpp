@@ -13,6 +13,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/AudioComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Components/BoxComponent.h"
 
 
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
@@ -23,7 +24,10 @@ ABaseEnemyTank::ABaseEnemyTank()
 	//Creating Hirarchical Structure
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
 	RootComponent = CapsuleComponent;
-	CapsuleComponent->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	CapsuleComponent->SetCollisionProfileName(TEXT("Pawn"));
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider"));
+	BoxComponent->SetupAttachment(CapsuleComponent);
+	BoxComponent->SetCollisionProfileName(TEXT("OnlyPawn"));
 	TankPivot = CreateDefaultSubobject<USceneComponent>(TEXT("Tank Pivot"));
 
 	TankPivot->SetupAttachment(CapsuleComponent);

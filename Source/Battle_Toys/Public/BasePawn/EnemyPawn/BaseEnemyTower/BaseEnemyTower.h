@@ -7,6 +7,7 @@
 #include "BaseEnemyTower.generated.h"
 
 class UCapsuleComponent;
+class UBoxComponent;
 
 /**
  * 
@@ -43,6 +44,9 @@ private:
     //Creating Hirarchical Structure
     UPROPERTY(VisibleAnywhere, Category = "Tower Component")
         UCapsuleComponent* CapsuleComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "Tank Component")
+        UBoxComponent* BoxComponent;
 
     UPROPERTY(EditAnywhere, Category = "Tower Mesh")
         UStaticMeshComponent* TowerHullMesh;

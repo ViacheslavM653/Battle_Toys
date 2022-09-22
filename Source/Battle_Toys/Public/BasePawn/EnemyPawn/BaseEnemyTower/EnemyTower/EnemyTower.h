@@ -24,6 +24,8 @@ public:
     /** Get condition for start Fire */
     bool bStartFire();
 
+    bool IsReadyForFire();
+
 
 
 protected:
@@ -39,5 +41,7 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         float FireRange = 500.f;
+
+    bool ShoodFire = false;
 
 };

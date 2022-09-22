@@ -11,6 +11,7 @@ class UCapsuleComponent;
 class USkeletalMeshComponent;
 class UFloatingPawnMovement;
 class UNiagaraComponent;
+class UBoxComponent;
 
 /**
  * 
@@ -97,6 +98,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "Tank Component")
         UCapsuleComponent* CapsuleComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "Tank Component")
+        UBoxComponent* BoxComponent;
 
     UPROPERTY(VisibleAnywhere, Category = "Tank Pivot")
         USceneComponent* TankPivot;
