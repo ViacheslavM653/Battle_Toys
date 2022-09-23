@@ -230,6 +230,7 @@ float ABaseEnemyTank::GetLeftWheelsAnimationSpeed()
 void ABaseEnemyTank::TurnActorToTarget(FVector TargetLocation)
 {
 	FVector ToTarget = TargetLocation - GetActorLocation();
+	//ToTarget.Z = ToTarget.Z - 90;
 	FVector ToTargetProgectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
 	FRotator TargetRotator = FMath::RInterpTo(
 		GetActorRotation(),

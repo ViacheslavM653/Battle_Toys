@@ -11,10 +11,17 @@
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/HostageTank/HostageTank.h"
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 #include "BasePawn/BasePawn.h"
+#include "BaseDestructibleActor/BaseDestructibleActor.h"
 
 
 void ABattleToysGameMode::ActorDied(AActor* DeadActor)
 {
+	//Check DeadActor is DestructibleActor
+	if (ABaseDestructibleActor* DestructibleActor = Cast<ABaseDestructibleActor>(DeadActor))
+	{
+		Cast<ABaseDestructibleActor>(DeadActor)->HandleDestruction();
+	}
+	
 	//Check DeadActor is player
 	if (APlayerTank* PlayerTank  = Cast<APlayerTank>(DeadActor))
 	{
