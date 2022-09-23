@@ -11,7 +11,7 @@
 
 UBTS_ET_GetFireStatus::UBTS_ET_GetFireStatus()
 {
-	NodeName = TEXT("Get ETower Fire Status");
+	NodeName = TEXT("Get ETank Fire Status");
 }
 
 void UBTS_ET_GetFireStatus::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
