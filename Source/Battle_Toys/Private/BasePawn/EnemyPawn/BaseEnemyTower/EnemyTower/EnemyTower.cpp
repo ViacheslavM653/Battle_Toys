@@ -108,6 +108,7 @@ AActor* AEnemyTower::FindClosestTarget()
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
 	TurnTankTowerToEnemy(TargetToTurn);
 	TargetToShot = nullptr;
+
 	return nullptr;
 
 }

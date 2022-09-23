@@ -6,12 +6,12 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyTank.h"
-#include "Kismet/GameplayStatics.h"
+
 
 
 UBTS_ET_GetFireStatus::UBTS_ET_GetFireStatus()
 {
-	NodeName = TEXT("Get Fire Status");
+	NodeName = TEXT("Get ETower Fire Status");
 }
 
 void UBTS_ET_GetFireStatus::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

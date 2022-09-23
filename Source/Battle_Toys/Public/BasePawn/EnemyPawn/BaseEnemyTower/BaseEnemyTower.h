@@ -25,13 +25,14 @@ public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 
+    /** Spawn Projectile and Produce Shot  */
+    void Fire();
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
 
-    /** Spawn Projectile and Produce Shot  */
-    void Fire();
 
     /**  TankTower follow to the Enemy
     * @param LookAtTarget - Enemy location
