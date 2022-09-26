@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyTank.h"
+#include "NavigationSystem.h"
 
 UBTS_ET_UpdateTargetLocation::UBTS_ET_UpdateTargetLocation()
 {
@@ -28,9 +29,21 @@ void UBTS_ET_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
     if (Cast<AEnemyTank>(OwnerPawn))
     {
         AActor* TargetActor = Cast<AEnemyTank>(OwnerPawn)->FindClosestTarget();
+
+
+        
+        
+
         if (TargetActor)
         {
-            OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), TargetActor->GetActorLocation());
+           //Randomness Location
+            FVector Origin = TargetActor->GetActorLocation();
+            float Radius = 200.f;
+            FNavLocation ResultLocation;
+            UNavigationSystemV1* NavigationArea;
+            FVector TargetLocation = NavigationArea->GetRandomPointInNavigableRadius(GetWorld(), Origin, Radius);
+            //
+            OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), TargetLocation);
         }
         else
         {
