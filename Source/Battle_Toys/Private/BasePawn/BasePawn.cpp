@@ -26,6 +26,11 @@ void ABasePawn::AddHealthFromUpgrade(float HealingValue)
 	UE_LOG(LogTemp, Warning, TEXT("Health changed! HealthComponent: %f"), HealthComponent);
 }
 
+float ABasePawn::GetHealthRate()
+{
+	return HealthComponent->GetHealthRate();
+}
+
 
 
 // Called when the game starts or when spawned

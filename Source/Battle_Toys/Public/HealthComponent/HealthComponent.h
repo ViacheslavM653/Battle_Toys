@@ -22,6 +22,8 @@ public:
 	* @param HealingValue - value received from UpgradeActor
 	*/
 	void AddHealthFromUpgrade(float HealingValue);
+	/** HealthRate for UI */
+	float GetHealthRate();
 		
 
 protected:

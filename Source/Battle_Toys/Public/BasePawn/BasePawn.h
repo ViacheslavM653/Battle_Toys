@@ -19,6 +19,9 @@ public:
 	ABasePawn();
 	/** Triger for UHealthComponent->AddHealthFromUpgrade(float HealingValue) */
 	virtual void AddHealthFromUpgrade(float HealingValue);
+	/** HealthRate for UI */
+	UFUNCTION(BlueprintPure)
+	float GetHealthRate();
 	
 
 protected:

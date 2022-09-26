@@ -31,6 +31,11 @@ void UHealthComponent::AddHealthFromUpgrade(float HealingValue)
 	
 }
 
+float UHealthComponent::GetHealthRate()
+{
+	return CurrentHealth/MaxHealth;
+}
+
 
 // Called when the game starts
 void UHealthComponent::BeginPlay()
