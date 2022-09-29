@@ -10,6 +10,7 @@ class UCapsuleComponent;
 class USkeletalMeshComponent;
 class UFloatingPawnMovement;
 class UNiagaraComponent;
+class UBoxComponent;
 
 /**
  * BaseFrendlyTank class
@@ -30,6 +31,9 @@ public:
     /** Float value for animation rate (from -1 to 1) */
     UFUNCTION(BlueprintPure)
     float GetLeftWheelsAnimationSpeed();
+
+    /** TurnActor if Velocity magnitude > 0*/
+    void TurnActorAccordingToVelocity();
 
     /** Spawn Projectile and Produce Shot  */
     virtual void Fire();
@@ -101,6 +105,9 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category = "Tank Component")
         UCapsuleComponent* CapsuleComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "Tank Component")
+        UBoxComponent* BoxComponent;
     
     UPROPERTY(VisibleAnywhere,  Category = "Tank Pivot")
         USceneComponent* TankPivot;
@@ -141,6 +148,9 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnTankTowerInterpolationSpeed = 5.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+        float TurnTankInterpolationSpeed = 5.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float SuspensionHardness = 10.f;

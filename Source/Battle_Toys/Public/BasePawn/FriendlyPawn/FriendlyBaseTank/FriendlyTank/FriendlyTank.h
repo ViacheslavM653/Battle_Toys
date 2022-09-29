@@ -21,6 +21,8 @@ public:
     virtual void Tick(float DeltaTime) override;
     /** Find closest Enemy pawn and turn Tower to his location */
     virtual AActor* FindClosestTarget();
+    /** Find closest Player pawn and turn Tower to his location */
+    virtual AActor* FindClosestPlayer();
     /** Get condition for start Fire */
     virtual bool bStartFire();
 
@@ -31,12 +33,18 @@ protected:
     virtual void BeginPlay() override;
 
     AActor* TargetToShot;
+    AActor* PlayerTankTarget;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     float SearchTargetRadius = 1000.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     float FireRange = 500.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+        float SearchPlayerRadius = 3000.f;
+
+ 
 private:
 
 

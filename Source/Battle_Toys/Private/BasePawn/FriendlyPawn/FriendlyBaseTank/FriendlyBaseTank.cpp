@@ -12,6 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/AudioComponent.h"
+#include "Components/BoxComponent.h"
 
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
@@ -23,7 +24,10 @@ AFriendlyBaseTank::AFriendlyBaseTank()
 	//Creating Hirarchical Structure
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
 	RootComponent = CapsuleComponent;
-	CapsuleComponent->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	CapsuleComponent->SetCollisionProfileName(TEXT("Pawn"));
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider"));
+	BoxComponent->SetupAttachment(CapsuleComponent);
+	BoxComponent->SetCollisionProfileName(TEXT("OnlyPawn"));
 	TankPivot = CreateDefaultSubobject<USceneComponent>(TEXT("Tank Pivot"));
 
 	TankPivot->SetupAttachment(CapsuleComponent);
@@ -213,6 +217,22 @@ float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 	}
 
 	return LeftTrackAnimationSpeed * TankWheelAnimationSpeedMultiplier;
+}
+
+void AFriendlyBaseTank::TurnActorAccordingToVelocity()
+{
+	FVector Velocity = GetVelocity();
+	if (Velocity.Length() > 0)
+	{
+		FRotator TargetRotator = FMath::RInterpTo(
+			GetActorRotation(),
+			Velocity.Rotation(),
+			UGameplayStatics::GetWorldDeltaSeconds(this),
+			TurnTankInterpolationSpeed
+		);
+		SetActorRotation(TargetRotator);
+	}
+
 }
 
 void AFriendlyBaseTank::Move(float AxisValue)

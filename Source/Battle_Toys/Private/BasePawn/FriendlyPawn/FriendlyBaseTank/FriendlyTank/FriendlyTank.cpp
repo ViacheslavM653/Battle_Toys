@@ -4,6 +4,7 @@
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
 #include "Kismet/GameplayStatics.h"
 #include "BasePawn/EnemyPawn/EnemyPawn.h"
+#include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 
 void AFriendlyTank::Tick(float DeltaTime)
 {
@@ -60,6 +61,49 @@ AActor* AFriendlyTank::FindClosestTarget()
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
 	TurnTankTowerToEnemy(TargetToTurn);
 	TargetToShot = nullptr;
+	return nullptr;
+}
+
+AActor* AFriendlyTank::FindClosestPlayer()
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerTank::StaticClass(), FoundActors);
+	TArray<AActor*> ActorsInSearchRange;
+
+	float CurrentMinDistance = SearchPlayerRadius;
+	AActor* CurrentTargetActor = nullptr;
+
+
+	if (FoundActors.IsEmpty())
+	{
+		return nullptr;
+	}
+	if (!FoundActors.IsEmpty())
+	{
+		for (int32 i = 0; i < FoundActors.Num(); i++)
+		{
+			float distance = FVector::Dist(GetActorLocation(), FoundActors[i]->GetActorLocation());
+
+			if (distance < SearchPlayerRadius)
+			{
+
+				if (distance < CurrentMinDistance)
+				{
+					CurrentMinDistance = distance;
+					CurrentTargetActor = FoundActors[i];
+				}
+			}
+
+		}
+	}
+	if (CurrentTargetActor)
+	{
+		PlayerTankTarget = CurrentTargetActor;
+		
+		return CurrentTargetActor;
+	}
+	
+	PlayerTankTarget = nullptr;
 	return nullptr;
 }
 
