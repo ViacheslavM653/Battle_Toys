@@ -56,11 +56,32 @@ AActor* AFriendlyTower::FindClosestTarget()
 		TargetToShot = CurrentTargetActorForShoot;
 		FVector TargetToTurn = CurrentTargetActorForShoot->GetActorLocation();
 		TurnTankTowerToEnemy(TargetToTurn);
+
+		float distance = FVector::Dist(GetActorLocation(), CurrentTargetActorForShoot->GetActorLocation());
+		if (Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
+		{
+			if (distance < FireRange)
+			{
+				ShoodFire = true;
+			}
+			if (distance > FireRange)
+			{
+				ShoodFire = false;
+			}
+
+		}
+		if (!Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
+		{
+			ShoodFire = false;
+
+		}
+
 		return CurrentTargetActorForShoot;
 	}
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
 	TurnTankTowerToEnemy(TargetToTurn);
 	TargetToShot = nullptr;
+	ShoodFire = false;
 	return nullptr;
 }
 
@@ -83,4 +104,9 @@ bool AFriendlyTower::bStartFire()
 	{
 		return false;
 	}
+}
+
+bool AFriendlyTower::IsReadyForFire()
+{
+	return ShoodFire;
 }

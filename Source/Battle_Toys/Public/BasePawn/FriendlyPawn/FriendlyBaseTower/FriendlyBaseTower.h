@@ -7,6 +7,7 @@
 #include "FriendlyBaseTower.generated.h"
 
 class UCapsuleComponent;
+class UBoxComponent;
 
 /**
  * 
@@ -23,13 +24,13 @@ public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 	
+    /** Spawn Projectile and Produce Shot  */
+    void Fire();
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
 
-    /** Spawn Projectile and Produce Shot  */
-    void Fire();
 
     /**  TankTower follow to the Enemy
     * @param LookAtTarget - Enemy location
@@ -42,6 +43,9 @@ private:
     //Creating Hirarchical Structure
     UPROPERTY(VisibleAnywhere, Category = "Tower Component")
         UCapsuleComponent* CapsuleComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "Tank Component")
+        UBoxComponent* BoxComponent;
 
     UPROPERTY(EditAnywhere, Category = "Tower Mesh")
         UStaticMeshComponent* TowerHullMesh;

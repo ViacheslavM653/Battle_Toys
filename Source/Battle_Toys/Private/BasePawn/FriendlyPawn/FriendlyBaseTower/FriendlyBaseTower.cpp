@@ -5,13 +5,16 @@
 #include "Components/CapsuleComponent.h"
 #include "BattleToysProjectile/BattleToysProjectile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
 
 AFriendlyBaseTower::AFriendlyBaseTower()
 {
 	//Creating Hirarchical Structure
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
-	CapsuleComponent->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	CapsuleComponent->SetCollisionProfileName(TEXT("Pawn"));
 	RootComponent = CapsuleComponent;
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider"));
+	BoxComponent->SetCollisionProfileName(TEXT("OnlyPawn"));
 	
 	TowerHullMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tower Hull Mesh"));
 	TowerHullMesh->SetupAttachment(CapsuleComponent);
@@ -52,7 +55,7 @@ void AFriendlyBaseTower::TurnTankTowerToEnemy(FVector& LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TowerHullMesh->GetComponentLocation();
 	FVector ToTargetProjectedXY = FVector::VectorPlaneProject(ToTarget, FVector(0, 0, 1));
-	FRotator TargetRotator = FRotator(0.f, ToTargetProjectedXY.Rotation().Yaw, 0.f);
+	FRotator TargetRotator = FRotator(0.f, ToTargetProjectedXY.Rotation().Yaw - 90, 0.f);
 	TargetRotator = FMath::RInterpTo(
 		TowerTowerMesh->GetComponentRotation(),
 		TargetRotator,
