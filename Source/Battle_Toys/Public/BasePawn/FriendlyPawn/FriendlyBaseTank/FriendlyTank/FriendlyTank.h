@@ -26,6 +26,8 @@ public:
     /** Get condition for start Fire */
     virtual bool bStartFire();
 
+    bool IsReadyForFire();
+
 
 
 protected:
@@ -44,6 +46,7 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
         float SearchPlayerRadius = 3000.f;
 
+    bool ShoodFire = false;
  
 private:
 
