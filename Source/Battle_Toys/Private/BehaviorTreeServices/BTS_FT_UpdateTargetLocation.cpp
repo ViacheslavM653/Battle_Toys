@@ -43,7 +43,7 @@ void UBTS_FT_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
         {
             //Randomness Location
             FVector Origin = TargetActor->GetActorLocation();
-            float Radius = 400.f;
+            float Radius = 300.f;
             FNavLocation ResultLocation;
             UNavigationSystemV1* NavigationArea;
             FVector TargetLocation = NavigationArea->GetRandomPointInNavigableRadius(GetWorld(), Origin, Radius);

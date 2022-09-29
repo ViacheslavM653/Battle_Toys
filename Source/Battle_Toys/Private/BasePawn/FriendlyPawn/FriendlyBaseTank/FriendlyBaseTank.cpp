@@ -114,8 +114,13 @@ float AFriendlyBaseTank::GetRightWheelsAnimationSpeed()
 	{
 		RightTrackAnimationSpeed = TankSpeedRate;
 	}
-	//Tank move forward and turn right
+	//Tank move forward and turn right before threshold
 	if (TankSpeedRate > 0 && TankTurnRight > 0)
+	{
+		RightTrackAnimationSpeed = 1;
+	}
+	//Tank move forward and turn right affter threshold
+	if (TankSpeedRate > 0 && TankTurnRight > 0.1)
 	{
 		RightTrackAnimationSpeed = 0;
 	}
@@ -184,8 +189,13 @@ float AFriendlyBaseTank::GetLeftWheelsAnimationSpeed()
 	{
 		LeftTrackAnimationSpeed = TankSpeedRate;
 	}
-	//Tank move forward and turn left
+	//Tank move forward and turn left before  threshold
 	if (TankSpeedRate > 0 && TankTurnRight < 0)
+	{
+		LeftTrackAnimationSpeed = 1;
+	}
+	//Tank move forward and turn left affter threshold
+	if (TankSpeedRate > 0 && TankTurnRight < -0.1)
 	{
 		LeftTrackAnimationSpeed = 0;
 	}

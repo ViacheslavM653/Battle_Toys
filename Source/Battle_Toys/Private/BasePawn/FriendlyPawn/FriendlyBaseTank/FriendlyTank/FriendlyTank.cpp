@@ -102,7 +102,8 @@ AActor* AFriendlyTank::FindClosestPlayer()
 		
 		return CurrentTargetActor;
 	}
-	
+	/*FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
+	TurnTankTowerToEnemy(TargetToTurn);*/
 	PlayerTankTarget = nullptr;
 	return nullptr;
 }
