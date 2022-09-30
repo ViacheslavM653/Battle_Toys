@@ -27,6 +27,14 @@ void UBTS_FT_UpdatePlayerTankIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp,
     {
         return;
     }
+    //
+    //if (OwnerPawn)
+    //{
+    //    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    //    OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PlayerPawn);
+
+    //}
+    //
 
     if (Cast<AFriendlyTank>(OwnerPawn))
     {
