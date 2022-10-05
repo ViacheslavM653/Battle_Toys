@@ -23,7 +23,7 @@ void ABasePawn::AddHealthFromUpgrade(float HealingValue)
 	{
 		HealthComponent->AddHealthFromUpgrade(HealingValue);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Health changed! HealthComponent: %f"), HealthComponent);
+	//UE_LOG(LogTemp, Warning, TEXT("Health changed! HealthComponent: %f"), HealthComponent);
 }
 
 float ABasePawn::GetHealthRate()
