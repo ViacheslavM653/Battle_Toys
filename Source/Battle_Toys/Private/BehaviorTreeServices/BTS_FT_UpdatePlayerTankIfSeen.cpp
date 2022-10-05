@@ -29,30 +29,30 @@ void UBTS_FT_UpdatePlayerTankIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp,
     }
     ////////// Start: Temp Part for Test//////////////////
 
-    if (OwnerPawn)
+   /* if (OwnerPawn)
     {
         APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
         OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PlayerPawn);
 
-    }
+    }*/
 
     ////////// End: Temp Part for Test//////////////////
 
-    //if (Cast<AFriendlyTank>(OwnerPawn))
-    //{
-    //    AActor* TargetActor = Cast<AFriendlyTank>(OwnerPawn)->FindClosestPlayer();
-    //    if (TargetActor)
-    //    {
-    //        if (OwnerComp.GetAIOwner()->LineOfSightTo(TargetActor))
-    //        {
-    //            OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), TargetActor);
-    //        }
-    //        else
-    //        {
-    //            OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
-    //        }
-    //    }
+    if (Cast<AFriendlyTank>(OwnerPawn))
+    {
+        AActor* TargetActor = Cast<AFriendlyTank>(OwnerPawn)->FindClosestPlayer();
+        if (TargetActor)
+        {
+            if (OwnerComp.GetAIOwner()->LineOfSightTo(TargetActor))
+            {
+                OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), TargetActor);
+            }
+            else
+            {
+                OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
+            }
+        }
 
-    //}
+    }
 
 }
