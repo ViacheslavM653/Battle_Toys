@@ -114,6 +114,7 @@ AActor* AFriendlyCharacterTank::FindClosestPlayer()
 	if (CurrentTargetActor)
 	{
 		PlayerTankTarget = CurrentTargetActor;
+		//UE_LOG(LogTemp, Warning, TEXT("FindedClosestPlayer!!"));
 
 		return CurrentTargetActor;
 	}

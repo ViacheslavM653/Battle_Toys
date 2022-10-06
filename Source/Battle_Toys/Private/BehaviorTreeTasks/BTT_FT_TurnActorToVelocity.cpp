@@ -2,7 +2,7 @@
 
 
 #include "BehaviorTreeTasks/BTT_FT_TurnActorToVelocity.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyCharacterTank.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 
@@ -18,7 +18,7 @@ EBTNodeResult::Type UBTT_FT_TurnActorToVelocity::ExecuteTask(UBehaviorTreeCompon
 	{
 		return EBTNodeResult::Failed;
 	}
-	AFriendlyTank* OwnerFriendlyTank = Cast<AFriendlyTank>(OwnerComp.GetAIOwner()->GetPawn());
+	AFriendlyCharacterTank* OwnerFriendlyTank = Cast<AFriendlyCharacterTank>(OwnerComp.GetAIOwner()->GetPawn());
 	if (OwnerFriendlyTank == nullptr)
 	{
 		return EBTNodeResult::Failed;

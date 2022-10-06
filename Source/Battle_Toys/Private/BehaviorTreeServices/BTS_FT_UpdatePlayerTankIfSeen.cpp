@@ -7,7 +7,7 @@
 #include "AIController.h"
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 #include "Kismet/GameplayStatics.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyCharacterTank.h"
 
 UBTS_FT_UpdatePlayerTankIfSeen::UBTS_FT_UpdatePlayerTankIfSeen()
 {
@@ -23,29 +23,33 @@ void UBTS_FT_UpdatePlayerTankIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp,
         return;
     }
     APawn* OwnerPawn = OwnerComp.GetAIOwner()->GetPawn();
+    //UE_LOG(LogTemp, Warning, TEXT("OwnerComp.GetAIOwner()->GetPawn()->GetClass()->GetFullName(): %s"), *OwnerPawn->GetClass()->GetFullName());
     if (OwnerPawn == nullptr)
     {
         return;
     }
     ////////// Start: Temp Part for Test//////////////////
 
-   /* if (OwnerPawn)
-    {
-        APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-        OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PlayerPawn);
-
-    }*/
+    //if (OwnerPawn)
+    //{
+    //    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    //    //UE_LOG(LogTemp, Warning, TEXT("UGameplayStatics::GetPlayerPawn: %s"), *PlayerPawn->GetActorNameOrLabel());
+    //    OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PlayerPawn);
+   
 
     ////////// End: Temp Part for Test//////////////////
+    //UE_LOG(LogTemp, Warning, TEXT("OwnerPawn: %s"), *OwnerPawn->GetActorNameOrLabel());
 
-    if (Cast<AFriendlyTank>(OwnerPawn))
+    if (Cast<AFriendlyCharacterTank>(OwnerPawn))
     {
-        AActor* TargetActor = Cast<AFriendlyTank>(OwnerPawn)->FindClosestPlayer();
+        
+        AActor* TargetActor = Cast<AFriendlyCharacterTank>(OwnerPawn)->FindClosestPlayer();
         if (TargetActor)
         {
             if (OwnerComp.GetAIOwner()->LineOfSightTo(TargetActor))
             {
                 OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), TargetActor);
+                //UE_LOG(LogTemp, Warning, TEXT("TargetActor: %s"), *TargetActor->GetActorNameOrLabel());
             }
             else
             {
