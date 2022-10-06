@@ -2,7 +2,7 @@
 
 
 #include "BehaviorTreeTasks/BTT_FT_Shoot.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyCharacterTank.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 
@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTT_FT_Shoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	{
 		return EBTNodeResult::Failed;
 	}
-	AFriendlyTank* OwnerTank = Cast<AFriendlyTank>(OwnerComp.GetAIOwner()->GetPawn());
+	AFriendlyCharacterTank* OwnerTank = Cast<AFriendlyCharacterTank>(OwnerComp.GetAIOwner()->GetPawn());
 	if (OwnerTank == nullptr)
 	{
 		return EBTNodeResult::Failed;

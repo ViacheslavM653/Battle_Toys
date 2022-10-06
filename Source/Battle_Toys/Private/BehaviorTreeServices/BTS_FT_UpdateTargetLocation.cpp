@@ -5,10 +5,10 @@
 #include "GameFramework\Pawn.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyCharacterTank.h"
 #include "NavigationSystem.h"
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/HostageTank/HostageTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyHostageCharacterTank/FriendlyHostageCharacterTank.h"
 
 UBTS_FT_UpdateTargetLocation::UBTS_FT_UpdateTargetLocation()
 {
@@ -28,16 +28,18 @@ void UBTS_FT_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
     {
         return;
     }
-    if (Cast<AFriendlyTank>(OwnerPawn))
+    
+    if (Cast<AFriendlyCharacterTank>(OwnerPawn))
     {
-        if (Cast<AHostageTank>(OwnerPawn))
+        
+        if (Cast<AFriendlyHostageCharacterTank>(OwnerPawn))
         {
-            if (!Cast<AHostageTank>(OwnerPawn)->GetHostageFreeStatus())
+            if (!Cast<AFriendlyHostageCharacterTank>(OwnerPawn)->GetHostageFreeStatus())
             {
                 return;
             }
         }
-        AActor* TargetActor = Cast<AFriendlyTank>(OwnerPawn)->FindClosestPlayer();
+        AActor* TargetActor = Cast<AFriendlyCharacterTank>(OwnerPawn)->FindClosestPlayer();
 
         if (TargetActor)
         {

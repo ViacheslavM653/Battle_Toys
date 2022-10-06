@@ -73,9 +73,10 @@ void UHealthComponent::DamageTaken(
 	}
 
 	CurrentHealth -= Damage;
-	
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentHealth : %f"), CurrentHealth);
 	if (CurrentHealth <= 0.f)
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("ActorDied!!"));
 		BattleToysGameMode = GetWorld()->GetAuthGameMode<ABattleToysGameMode>();
 		if (BattleToysGameMode != nullptr)
 		{

@@ -12,6 +12,7 @@
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 #include "BasePawn/BasePawn.h"
 #include "BaseDestructibleActor/BaseDestructibleActor.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterBaseTank.h"
 
 
 void ABattleToysGameMode::ActorDied(AActor* DeadActor)
@@ -51,6 +52,10 @@ void ABattleToysGameMode::ActorDied(AActor* DeadActor)
 			}
 		}
 		EnemyBossTank->HandleDestruction();
+	}
+	if (AFriendlyCharacterBaseTank* FriendlyCharacterBaseTank = Cast<AFriendlyCharacterBaseTank>(DeadActor))
+	{
+		FriendlyCharacterBaseTank->HandleDestruction();
 	}
 	else if (ABasePawn* BasePawn = Cast<ABasePawn>(DeadActor))
 	{
