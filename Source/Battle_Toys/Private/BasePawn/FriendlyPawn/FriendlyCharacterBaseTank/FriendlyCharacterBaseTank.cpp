@@ -587,12 +587,12 @@ void AFriendlyCharacterBaseTank::GetTankSpeedRateForAnimation()
 		TankSpeedRate = 1;
 	}
 
-	float TankSpeedSign = TankVelocity.Y * TankActorForwardVector.Y;
+	/*float TankSpeedSign = TankVelocity.Y * TankActorForwardVector.Y;
 	if (TankSpeedSign != 0)
 	{
 		TankSpeedSign = TankSpeedSign / FMath::Abs(TankSpeedSign);
 		TankSpeedRate = TankSpeedRate * TankSpeedSign;
-	}
+	}*/
 
 	TankSpeedRateForAnimation = TankSpeedRate;
 }
