@@ -5,7 +5,7 @@
 #include "GameFramework\Pawn.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/FriendlyTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyCharacterTank.h"
 
 UBTS_FT_GetFireStatus::UBTS_FT_GetFireStatus()
 {
@@ -26,9 +26,9 @@ void UBTS_FT_GetFireStatus::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
         return;
     }
 
-    if (Cast<AFriendlyTank>(OwnerPawn))
+    if (Cast<AFriendlyCharacterTank>(OwnerPawn))
     {
-        bool FireStatus = Cast<AFriendlyTank>(OwnerPawn)->IsReadyForFire();
+        bool FireStatus = Cast<AFriendlyCharacterTank>(OwnerPawn)->IsReadyForFire();
 
         OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), FireStatus);
 
