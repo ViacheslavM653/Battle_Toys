@@ -5,7 +5,7 @@
 #include "GameFramework\Pawn.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
-#include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyTank.h"
+#include "BasePawn/EnemyPawn/EnemyCharacterBaseTank/EnemyCharacterTank/EnemyCharacterTank.h"
 #include "Kismet/GameplayStatics.h"
 
 UBTS_ET_TargetLocationIfSeen::UBTS_ET_TargetLocationIfSeen()
@@ -27,9 +27,9 @@ void UBTS_ET_TargetLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp, u
         return;
     }
 
-    if (Cast<AEnemyTank>(OwnerPawn))
+    if (Cast<AEnemyCharacterTank>(OwnerPawn))
     {
-        AActor* TargetActor = Cast<AEnemyTank>(OwnerPawn)->FindClosestTarget();
+        AActor* TargetActor = Cast<AEnemyCharacterTank>(OwnerPawn)->FindClosestTarget();
         if (TargetActor)
         {
             if (OwnerComp.GetAIOwner()->LineOfSightTo(TargetActor))
