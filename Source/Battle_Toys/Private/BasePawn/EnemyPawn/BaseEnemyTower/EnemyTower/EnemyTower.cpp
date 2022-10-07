@@ -83,7 +83,7 @@ AActor* AEnemyTower::FindClosestTarget()
 	{
 		TargetToShot = CurrentTargetActorForShoot;
 		FVector TargetToTurn = CurrentTargetActorForShoot->GetActorLocation();
-		UE_LOG(LogTemp, Warning, TEXT("TargetToShot: %s"), *TargetToShot->GetActorNameOrLabel())
+		//UE_LOG(LogTemp, Warning, TEXT("TargetToShot: %s"), *TargetToShot->GetActorNameOrLabel())
 
 			TurnTankTowerToEnemy(TargetToTurn);
 
