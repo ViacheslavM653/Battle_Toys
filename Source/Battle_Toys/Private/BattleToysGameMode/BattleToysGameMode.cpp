@@ -8,11 +8,13 @@
 #include "Kismet\GameplayStatics.h"
 #include "BasePawn/EnemyPawn/EnemyPawn.h"
 #include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyBossTank/EnemyBossTank.h"
-#include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/HostageTank/HostageTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyHostageCharacterTank/FriendlyHostageCharacterTank.h"
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 #include "BasePawn/BasePawn.h"
 #include "BaseDestructibleActor/BaseDestructibleActor.h"
 #include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterBaseTank.h"
+#include "BasePawn/EnemyPawn/EnemyCharacterBaseTank/EnemyCharacterTank/EnemyCharacterTank.h"
+#include "BasePawn/EnemyPawn/EnemyCharacterBaseTank/EnemyCharacterTank/EnemyBossCharacterTank/EnemyBossCharacterTank.h"
 
 
 void ABattleToysGameMode::ActorDied(AActor* DeadActor)
@@ -34,19 +36,19 @@ void ABattleToysGameMode::ActorDied(AActor* DeadActor)
 		}*/
 	}
 	//chek DeadActor is Boss
-	if (AEnemyBossTank* EnemyBossTank = Cast<AEnemyBossTank>(DeadActor))
+	if (AEnemyBossCharacterTank* EnemyBossTank = Cast<AEnemyBossCharacterTank>(DeadActor))
 	{
 		int32 HoldHostageID = EnemyBossTank->GetHoldHostageID();
 		TArray<AActor*> FoundAllAHostageTanks;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHostageTank::StaticClass(), FoundAllAHostageTanks);
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyHostageCharacterTank::StaticClass(), FoundAllAHostageTanks);
 		if (!FoundAllAHostageTanks.IsEmpty())
 		{
 			for (int32 i = 0; i < FoundAllAHostageTanks.Num(); i++)
 			{
-				int32 HostageID = Cast<AHostageTank>(FoundAllAHostageTanks[i])->GetHostageID();
+				int32 HostageID = Cast<AFriendlyHostageCharacterTank>(FoundAllAHostageTanks[i])->GetHostageID();
 				if (HoldHostageID == HostageID)
 				{
-					Cast<AHostageTank>(FoundAllAHostageTanks[i])->SetFreeHostage();
+					Cast<AFriendlyHostageCharacterTank>(FoundAllAHostageTanks[i])->SetFreeHostage();
 				}
 
 			}
@@ -57,13 +59,28 @@ void ABattleToysGameMode::ActorDied(AActor* DeadActor)
 	{
 		FriendlyCharacterBaseTank->HandleDestruction();
 	}
+	if (AEnemyCharacterTank* EnemyCharacterTank = Cast<AEnemyCharacterTank>(DeadActor))
+	{
+		EnemyCharacterTank->HandleDestruction();
+	}
 	else if (ABasePawn* BasePawn = Cast<ABasePawn>(DeadActor))
 	{
 		BasePawn->HandleDestruction();
 	}
+
+
 	//Check IsAlive  all enemies
 	TArray<AActor*> FoundAllEmenyes;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyPawn::StaticClass(), FoundAllEmenyes);
+	TArray<AActor*> AllFoundCharacterTank;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacterTank::StaticClass(), AllFoundCharacterTank);
+	if (AllFoundCharacterTank.Num() > 0)
+	{
+		for (int32 i = 0; i < AllFoundCharacterTank.Num(); i++)
+		{
+			FoundAllEmenyes.Add(AllFoundCharacterTank[i]);
+		}
+	}
 
 	if (!FoundAllEmenyes.Num())
 	{
