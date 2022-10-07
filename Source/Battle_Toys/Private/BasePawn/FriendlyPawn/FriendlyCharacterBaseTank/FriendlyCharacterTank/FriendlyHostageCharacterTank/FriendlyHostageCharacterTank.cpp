@@ -113,7 +113,13 @@ AActor* AFriendlyHostageCharacterTank::FindClosestTarget()
 
 			}
 
+			return CurrentTargetActorForShoot;
 		}
+		FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
+		TurnTankTowerToEnemy(TargetToTurn);
+		TargetToShot = nullptr;
+		ShoodFire = false;
+		return nullptr;
 	}
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
 	TurnTankTowerToEnemy(TargetToTurn);
