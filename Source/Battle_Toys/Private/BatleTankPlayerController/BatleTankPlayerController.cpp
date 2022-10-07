@@ -3,6 +3,7 @@
 
 #include "BatleTankPlayerController/BatleTankPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "TimerManager.h"
 
 
 void ABatleTankPlayerController::BeginPlay()
@@ -50,6 +51,7 @@ void ABatleTankPlayerController::GameHasEnded(AActor* EndGameFocus, bool bIsWinn
 			bShowMouseCursor = false;
 			LosseScreen->AddToViewport();
 		}
+		GetWorldTimerManager().SetTimer(RestartTimerhandle, this, &APlayerController::RestartLevel, RestartDelay);
 	}
 }
 
