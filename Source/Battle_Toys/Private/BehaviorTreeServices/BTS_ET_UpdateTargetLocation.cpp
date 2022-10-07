@@ -5,7 +5,7 @@
 #include "GameFramework\Pawn.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
-#include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyTank.h"
+#include "BasePawn/EnemyPawn/EnemyCharacterBaseTank/EnemyCharacterTank/EnemyCharacterTank.h"
 #include "NavigationSystem.h"
 
 UBTS_ET_UpdateTargetLocation::UBTS_ET_UpdateTargetLocation()
@@ -26,13 +26,9 @@ void UBTS_ET_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
     {
         return;
     }
-    if (Cast<AEnemyTank>(OwnerPawn))
+    if (Cast<AEnemyCharacterTank>(OwnerPawn))
     {
-        AActor* TargetActor = Cast<AEnemyTank>(OwnerPawn)->FindClosestTarget();
-
-
-        
-        
+        AActor* TargetActor = Cast<AEnemyCharacterTank>(OwnerPawn)->FindClosestTarget();  
 
         if (TargetActor)
         {
@@ -48,8 +44,7 @@ void UBTS_ET_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
         else
         {
             return;
-        }
-        
+        }    
        
     }
 }
