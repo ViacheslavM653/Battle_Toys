@@ -6,6 +6,8 @@
 #include "BasePawn/FriendlyPawn/FriendlyPawn.h"
 #include "BasePawn/BasePawn.h"
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/FriendlyTank/HostageTank/HostageTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyHostageCharacterTank/FriendlyHostageCharacterTank.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterBaseTank.h"
 
 void AEnemyTower::Tick(float DeltaTime)
 {
@@ -24,19 +26,28 @@ AActor* AEnemyTower::FindClosestTarget()
 
 
 	TArray<AActor*> AllFoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyPawn::StaticClass(), AllFoundActors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyCharacterTank::StaticClass(), AllFoundActors);
+	TArray<AActor*> AllFoundPawns;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyPawn::StaticClass(), AllFoundPawns);
+	if (AllFoundPawns.Num() > 0)
+	{
+		for (int32 i = 0; i < AllFoundPawns.Num(); i++)
+		{
+			AllFoundActors.Add(AllFoundPawns[i]);
+		}
+	}
 
 
 	TArray<AActor*> FoundActors;
 	for (int32 i = 0; i < AllFoundActors.Num(); i++)
 	{
-		if (!Cast<AHostageTank>(AllFoundActors[i]))
+		if (!Cast<AFriendlyHostageCharacterTank>(AllFoundActors[i]))
 		{
 			FoundActors.Add(AllFoundActors[i]);
 		}
-		if (Cast<AHostageTank>(AllFoundActors[i]))
+		if (Cast<AFriendlyHostageCharacterTank>(AllFoundActors[i]))
 		{
-			if (Cast<AHostageTank>(AllFoundActors[i])->GetHostageFreeStatus())
+			if (Cast<AFriendlyHostageCharacterTank>(AllFoundActors[i])->GetHostageFreeStatus())
 			{
 				FoundActors.Add(AllFoundActors[i]);
 			}
@@ -72,34 +83,59 @@ AActor* AEnemyTower::FindClosestTarget()
 	{
 		TargetToShot = CurrentTargetActorForShoot;
 		FVector TargetToTurn = CurrentTargetActorForShoot->GetActorLocation();
+		UE_LOG(LogTemp, Warning, TEXT("TargetToShot: %s"), *TargetToShot->GetActorNameOrLabel())
 
-
-		TurnTankTowerToEnemy(TargetToTurn);
+			TurnTankTowerToEnemy(TargetToTurn);
 
 		float distance = FVector::Dist(GetActorLocation(), CurrentTargetActorForShoot->GetActorLocation());
-		if (Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
+		if (Cast<ABasePawn>(CurrentTargetActorForShoot))
 		{
-			if (distance < FireRange)
+			if (Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
 			{
-				ShoodFire = true;
+				if (distance < FireRange)
+				{
+					ShoodFire = true;
+				}
+				if (distance > FireRange)
+				{
+					ShoodFire = false;
+				}
+
+
 			}
-			if (distance > FireRange)
+			if (!Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
+			{
+				ShoodFire = false;
+
+
+			}
+		}
+		if (Cast<AFriendlyCharacterTank>(CurrentTargetActorForShoot))
+		{
+			if (Cast<AFriendlyCharacterTank>(CurrentTargetActorForShoot)->IsPawnAlive())
+			{
+				if (distance < FireRange)
+				{
+					ShoodFire = true;
+				}
+				if (distance > FireRange)
+				{
+					ShoodFire = false;
+				}
+
+				if (Cast<AFriendlyHostageCharacterTank>(CurrentTargetActorForShoot))
+				{
+					if (!Cast<AFriendlyHostageCharacterTank>(CurrentTargetActorForShoot)->GetHostageFreeStatus())
+					{
+						ShoodFire = false;
+
+					}
+				}
+			}
+			if (!Cast<AFriendlyCharacterTank>(CurrentTargetActorForShoot)->IsPawnAlive())
 			{
 				ShoodFire = false;
 			}
-			if (Cast<AHostageTank>(CurrentTargetActorForShoot))
-			{
-				if (!Cast<AHostageTank>(CurrentTargetActorForShoot)->GetHostageFreeStatus())
-				{
-					ShoodFire = false;
-
-				}
-			}
-
-		}
-		if (!Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
-		{
-			ShoodFire = false;
 
 		}
 
@@ -108,7 +144,6 @@ AActor* AEnemyTower::FindClosestTarget()
 	FVector TargetToTurn = GetActorLocation() + GetActorForwardVector();
 	TurnTankTowerToEnemy(TargetToTurn);
 	TargetToShot = nullptr;
-
 	return nullptr;
 
 }

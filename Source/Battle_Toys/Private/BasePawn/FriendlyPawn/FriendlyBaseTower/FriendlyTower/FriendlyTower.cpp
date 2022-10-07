@@ -4,6 +4,7 @@
 #include "BasePawn/FriendlyPawn/FriendlyBaseTower/FriendlyTower/FriendlyTower.h"
 #include "Kismet/GameplayStatics.h"
 #include "BasePawn/EnemyPawn/EnemyPawn.h"
+#include "BasePawn/EnemyPawn/EnemyCharacterBaseTank/EnemyCharacterTank/EnemyCharacterTank.h"
 
 
 void AFriendlyTower::Tick(float DeltaTime)
@@ -21,23 +22,31 @@ void AFriendlyTower::BeginPlay()
 AActor* AFriendlyTower::FindClosestTarget()
 {
 
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyPawn::StaticClass(), FoundActors);
-	TArray<AActor*> ActorsInSearchRange;
+	TArray<AActor*> AllFoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacterTank::StaticClass(), AllFoundActors);
+	TArray<AActor*> AllFoundPawns;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyPawn::StaticClass(), AllFoundPawns);
+	if (AllFoundPawns.Num() > 0)
+	{
+		for (int32 i = 0; i < AllFoundPawns.Num(); i++)
+		{
+			AllFoundActors.Add(AllFoundPawns[i]);
+		}
+	}
 
 	float CurrentMinDistance = SearchTargetRadius;
 	AActor* CurrentTargetActorForShoot = nullptr;
 
 
-	if (FoundActors.IsEmpty())
+	if (AllFoundActors.IsEmpty())
 	{
 		return nullptr;
 	}
-	if (!FoundActors.IsEmpty())
+	if (!AllFoundActors.IsEmpty())
 	{
-		for (int32 i = 0; i < FoundActors.Num(); i++)
+		for (int32 i = 0; i < AllFoundActors.Num(); i++)
 		{
-			float distance = FVector::Dist(GetActorLocation(), FoundActors[i]->GetActorLocation());
+			float distance = FVector::Dist(GetActorLocation(), AllFoundActors[i]->GetActorLocation());
 
 			if (distance < SearchTargetRadius)
 			{
@@ -45,7 +54,7 @@ AActor* AFriendlyTower::FindClosestTarget()
 				if (distance < CurrentMinDistance)
 				{
 					CurrentMinDistance = distance;
-					CurrentTargetActorForShoot = FoundActors[i];
+					CurrentTargetActorForShoot = AllFoundActors[i];
 				}
 			}
 
@@ -58,21 +67,46 @@ AActor* AFriendlyTower::FindClosestTarget()
 		TurnTankTowerToEnemy(TargetToTurn);
 
 		float distance = FVector::Dist(GetActorLocation(), CurrentTargetActorForShoot->GetActorLocation());
-		if (Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
+		if (Cast<ABasePawn>(CurrentTargetActorForShoot))
 		{
-			if (distance < FireRange)
+			if (Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
 			{
-				ShoodFire = true;
+				if (distance < FireRange)
+				{
+					ShoodFire = true;
+				}
+				if (distance > FireRange)
+				{
+					ShoodFire = false;
+				}
+
+
 			}
-			if (distance > FireRange)
+			if (!Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
+			{
+				ShoodFire = false;
+
+
+			}
+		}
+		if (Cast<AEnemyCharacterTank>(CurrentTargetActorForShoot))
+		{
+			if (Cast<AEnemyCharacterTank>(CurrentTargetActorForShoot)->IsPawnAlive())
+			{
+				if (distance < FireRange)
+				{
+					ShoodFire = true;
+				}
+				if (distance > FireRange)
+				{
+					ShoodFire = false;
+				}
+
+			}
+			if (!Cast<AEnemyCharacterTank>(CurrentTargetActorForShoot)->IsPawnAlive())
 			{
 				ShoodFire = false;
 			}
-
-		}
-		if (!Cast<ABasePawn>(CurrentTargetActorForShoot)->IsPawnAlive())
-		{
-			ShoodFire = false;
 
 		}
 
