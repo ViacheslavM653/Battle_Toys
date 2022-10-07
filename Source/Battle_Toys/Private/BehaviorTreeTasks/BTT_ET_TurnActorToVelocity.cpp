@@ -2,7 +2,7 @@
 
 
 #include "BehaviorTreeTasks/BTT_ET_TurnActorToVelocity.h"
-#include "BasePawn/EnemyPawn/BaseEnemyTank/EnemyTank/EnemyTank.h"
+#include "BasePawn/EnemyPawn/EnemyCharacterBaseTank/EnemyCharacterTank/EnemyCharacterTank.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 
@@ -18,7 +18,7 @@ EBTNodeResult::Type UBTT_ET_TurnActorToVelocity::ExecuteTask(UBehaviorTreeCompon
 	{
 		return EBTNodeResult::Failed;
 	}
-	AEnemyTank* OwnerEnemyTank = Cast<AEnemyTank>(OwnerComp.GetAIOwner()->GetPawn());
+	AEnemyCharacterTank* OwnerEnemyTank = Cast<AEnemyCharacterTank>(OwnerComp.GetAIOwner()->GetPawn());
 	if (OwnerEnemyTank == nullptr)
 	{
 		return EBTNodeResult::Failed;
