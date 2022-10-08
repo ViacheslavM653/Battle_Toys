@@ -6,7 +6,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyCharacterTank.h"
-#include "NavigationSystem.h"
 #include "BasePawn/FriendlyPawn/FriendlyBaseTank/PlayerTank/PlayerTank.h"
 #include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterTank/FriendlyHostageCharacterTank/FriendlyHostageCharacterTank.h"
 
@@ -46,11 +45,13 @@ void UBTS_FT_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
             //Randomness Location
             FVector Origin = TargetActor->GetActorLocation();
             float Radius = 300.f;
-            FNavLocation ResultLocation;
-            UNavigationSystemV1* NavigationArea;
-            FVector TargetLocation = NavigationArea->GetRandomPointInNavigableRadius(GetWorld(), Origin, Radius);
+   /*         ANavigationData* NavigationData;
+            FNavLocation OutResult;*/
+            //UNavigationSystemV1* NavigationArea;
+            //FVector TargetLocation = NavigationArea->GetRandomPointInNavigableRadius(GetWorld(), Origin, Radius);
+
             //
-            OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), TargetLocation);
+            OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), Origin);
         }
         else
         {

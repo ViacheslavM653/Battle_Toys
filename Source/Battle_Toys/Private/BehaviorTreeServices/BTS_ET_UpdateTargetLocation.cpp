@@ -34,12 +34,12 @@ void UBTS_ET_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp, u
         {
            //Randomness Location
             FVector Origin = TargetActor->GetActorLocation();
-            float Radius = 200.f;
+       /*     float Radius = 200.f;
             FNavLocation ResultLocation;
             UNavigationSystemV1* NavigationArea;
-            FVector TargetLocation = NavigationArea->GetRandomPointInNavigableRadius(GetWorld(), Origin, Radius);
+            FVector TargetLocation = NavigationArea->GetRandomPointInNavigableRadius(GetWorld(), Origin, Radius);*/
             //
-            OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), TargetLocation);
+            OwnerComp.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), Origin);
         }
         else
         {

@@ -28,9 +28,20 @@ void UBTS_FT_GetFireStatus::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 
     if (Cast<AFriendlyCharacterTank>(OwnerPawn))
     {
-        bool FireStatus = Cast<AFriendlyCharacterTank>(OwnerPawn)->IsReadyForFire();
+        if (Cast<AFriendlyCharacterTank>(OwnerPawn)->FindClosestTarget())
+        {
+            if (OwnerComp.GetAIOwner()->LineOfSightTo(Cast<AFriendlyCharacterTank>(OwnerPawn)->FindClosestTarget()))
+            {
+                bool FireStatus = Cast<AFriendlyCharacterTank>(OwnerPawn)->IsReadyForFire();
 
-        OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), FireStatus);
+                OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), FireStatus);
+
+            }
+        }
+        else
+        {
+            OwnerComp.GetBlackboardComponent()->SetValueAsBool(GetSelectedBlackboardKey(), false);
+        }
 
     }
 
