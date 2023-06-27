@@ -46,6 +46,9 @@ private:
 	/** Setup Controll for Tank Tower by mouse controll  */
 	void TankTowerControl();
 
+	/** Find FriendlyActor under cursor */
+	void TraceFriendlyActor();
+
 	UPROPERTY(EditAnywhere, Category = "Good Mod")
 		bool IsGoodMod = false;
 

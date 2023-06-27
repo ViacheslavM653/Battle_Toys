@@ -10,6 +10,7 @@ class ABattleToysProjectile;
 class UHealthComponent;
 class UNiagaraComponent;
 class UBoxComponent;
+class UOutlineMaterialComponent;
 
 UCLASS()
 class BATTLE_TOYS_API AFriendlyCharacterBaseTank : public ACharacter
@@ -32,6 +33,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Health")
 		UHealthComponent* HealthComponent;
 
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+    //++++++++++++++ Start:  Functional Outline shader and Freindly sprite for FriendlyBaseTank +++++++++++++++++//
+
+    UPROPERTY(EditAnywhere, Category = "OutlineMaterial")
+        UOutlineMaterialComponent* OutlineMaterialComponent;
+
+    //++++++++++++++ End:  Functional Outline shader and Freindly sprite for FriendlyBaseTank ++++++++++++++++++//
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+
 	UPROPERTY(EditAnywhere, Category = "Death")
 		UParticleSystem* DeathParticles;
 
@@ -42,6 +53,20 @@ protected:
 		TSubclassOf<UCameraShakeBase> DeathCameraShakeClass;
 	////////////////// End:    Functional from BasePawn ////////////////////////
 	////////////////////////////////////////////////////////////////////////////
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+        TObjectPtr<USkeletalMeshComponent> TankHullSkeletalMesh;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
+        TObjectPtr<UStaticMeshComponent> TankLeftTrackMesh;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
+        TObjectPtr<UStaticMeshComponent> TankRightTrackMesh;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
+        TObjectPtr<UStaticMeshComponent> TankTowerMesh;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
+        TObjectPtr<UStaticMeshComponent> TankBarrelMesh;
 
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	//++++++++++++++ Start:  Functional from FriendlyBaseTank +++++++++++++++++//
@@ -85,6 +110,18 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+    //++++++++++++++ Start:  Functional Outline shader and Freindly sprite for FriendlyBaseTank +++++++++++++++++//
+    UFUNCTION(BlueprintPure)
+    bool GetTraceFriendlyActorStatus();
+
+    void UpdateTraceFriendlyActorStatus(const bool traceStatus);
+     
+    //++++++++++++++ End:  Functional Outline shader and Freindly sprite for FriendlyBaseTank ++++++++++++++++++//
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
 
 	////////////////////////////////////////////////////////////////////////////
 	////////////////// Start:  Functional from BasePawn ////////////////////////
@@ -180,27 +217,11 @@ private:
     UPROPERTY(VisibleAnywhere, Category = "Tank BackwardLeftWheel Sensor ")
         TObjectPtr<USceneComponent> BackwardLeftWheelSensor;
 
-    UPROPERTY(EditAnywhere, Category = Character)
-        TObjectPtr<USkeletalMeshComponent> TankHullSkeletalMesh;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
         TObjectPtr<UNiagaraComponent> RightExhaustNPS;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Exhaust Particles", meta = (AllowPrivateAccess = "true"))
         TObjectPtr<UNiagaraComponent> LeftExhaustNPS;
-
-    UPROPERTY(VisibleAnywhere, Category = Character)
-        TObjectPtr<UStaticMeshComponent> TankLeftTrackMesh;
-
-    UPROPERTY(VisibleAnywhere, Category = Character)
-        TObjectPtr<UStaticMeshComponent> TankRightTrackMesh;
-
-    UPROPERTY(VisibleAnywhere, Category = Character)
-        TObjectPtr<UStaticMeshComponent> TankTowerMesh;
-
-    UPROPERTY(VisibleAnywhere, Category = Character)
-        TObjectPtr<UStaticMeshComponent> TankBarrelMesh;
-
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
         float TurnTankTowerInterpolationSpeed = 5.f;
@@ -273,4 +294,6 @@ private:
 
 	//++++++++++++++ End:  Functional from FriendlyBaseTank ++++++++++++++++++//
 	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+
 };

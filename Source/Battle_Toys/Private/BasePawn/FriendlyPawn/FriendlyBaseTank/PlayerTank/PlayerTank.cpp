@@ -7,6 +7,7 @@
 #include "BattleToysProjectile/BattleToysProjectile.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "BasePawn/FriendlyPawn/FriendlyCharacterBaseTank/FriendlyCharacterBaseTank.h"
 
 void APlayerTank::BeginPlay()
 {
@@ -116,11 +117,63 @@ void APlayerTank::TankTowerControl()
 	}
 }
 
+void APlayerTank::TraceFriendlyActor()
+{
+	if (PlayerTankController)
+	{
+		FHitResult HitResult;
+		PlayerTankController->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,
+			false,
+			HitResult
+		);
+
+		AActor* HitedActor = HitResult.GetActor();
+
+		if (HitedActor != nullptr)
+		{
+			AFriendlyCharacterBaseTank* friendlyTankPtr = Cast<AFriendlyCharacterBaseTank>(HitedActor);
+			
+			if (friendlyTankPtr != nullptr)
+			{
+				friendlyTankPtr->UpdateTraceFriendlyActorStatus(true);
+			}
+			else
+			{
+				TArray<AActor*> FoundFriendlyTanks;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFriendlyCharacterBaseTank::StaticClass(), FoundFriendlyTanks);
+
+				for (AActor* TActor : FoundFriendlyTanks)
+				{
+					AFriendlyCharacterBaseTank* TFriendlyTank = Cast<AFriendlyCharacterBaseTank>(TActor);
+					if (TFriendlyTank != nullptr)
+					{
+						TFriendlyTank->UpdateTraceFriendlyActorStatus(false);
+					}
+
+				}
+			}
+		/*	if (GEngine)
+			{
+				FString HitedActorName = HitedActor->GetName();
+
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+					HitedActorName);
+
+			}*/
+
+		}
+
+				
+	}
+}
+
 void APlayerTank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	TankTowerControl();
+	TraceFriendlyActor();
 		
 	if (IsGoodMod)
 	{

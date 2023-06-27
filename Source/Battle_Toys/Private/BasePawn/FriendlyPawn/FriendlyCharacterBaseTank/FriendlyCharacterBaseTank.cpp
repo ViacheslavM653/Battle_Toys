@@ -15,6 +15,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
+#include "OutlineMaterialComponent/OutlineMaterialComponent.h"
 
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
@@ -26,6 +27,14 @@ AFriendlyCharacterBaseTank::AFriendlyCharacterBaseTank()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	//++++++++++++++ Start:  Functional Outline shader and Freindly sprite for FriendlyBaseTank +++++++++++++++++//
+
+	OutlineMaterialComponent = CreateDefaultSubobject< UOutlineMaterialComponent>(TEXT("OutlineMaterialComponent"));
+
+	//++++++++++++++ End:  Functional Outline shader and Freindly sprite for FriendlyBaseTank ++++++++++++++++++//
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	
 
 	//Creating Hirarchical Structure
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider"));
@@ -283,6 +292,8 @@ void AFriendlyCharacterBaseTank::Tick(float DeltaTime)
 
 	StorageActorRotation(TankRotationHistoryDepth);
 
+	GetTraceFriendlyActorStatus();
+
 	GetTankSpeedRateForAnimation();
 
 	GetTankTurnRightForAnimation();
@@ -345,6 +356,25 @@ void AFriendlyCharacterBaseTank::SetPawnDie()
 bool AFriendlyCharacterBaseTank::IsPawnAlive()
 {
 	return bPawnAlive;
+}
+
+bool AFriendlyCharacterBaseTank::GetTraceFriendlyActorStatus()
+{
+	return OutlineMaterialComponent->GetTraceFriendlyActorStatus();
+}
+
+void AFriendlyCharacterBaseTank::UpdateTraceFriendlyActorStatus(const bool traceStatus)
+{
+	if (traceStatus == true)
+	{
+		OutlineMaterialComponent->SetTraceFriendlyActor(true);
+		
+	}
+	else
+	{
+		OutlineMaterialComponent->SetTraceFriendlyActor(false);
+	}
+	
 }
 
 float AFriendlyCharacterBaseTank::GetRightWheelsAnimationSpeed()
