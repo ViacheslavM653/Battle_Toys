@@ -17,6 +17,8 @@
 #include "Components/BoxComponent.h"
 #include "OutlineMaterialComponent/OutlineMaterialComponent.h"
 
+#include "Components/WidgetComponent.h"
+
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include "../../../../Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 
@@ -27,20 +29,22 @@ AFriendlyCharacterBaseTank::AFriendlyCharacterBaseTank()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	//++++++++++++++ Start:  Functional Outline shader and Freindly sprite for FriendlyBaseTank +++++++++++++++++//
-
-	OutlineMaterialComponent = CreateDefaultSubobject< UOutlineMaterialComponent>(TEXT("OutlineMaterialComponent"));
-
-	//++++++++++++++ End:  Functional Outline shader and Freindly sprite for FriendlyBaseTank ++++++++++++++++++//
-	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	
-
 	//Creating Hirarchical Structure
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider"));
 	BoxComponent->SetupAttachment(RootComponent);
 	BoxComponent->SetCollisionProfileName(TEXT("OnlyPawn"));
 	TankPivot = CreateDefaultSubobject<USceneComponent>(TEXT("Tank Pivot"));
+
+	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	//++++++++++++++ Start:  Functional Outline shader and Freindly sprite for FriendlyBaseTank +++++++++++++++++//
+
+	FriendWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Friend Widget"));
+	FriendWidget->SetupAttachment(RootComponent);
+	OutlineMaterialComponent = CreateDefaultSubobject< UOutlineMaterialComponent>(TEXT("OutlineMaterialComponent"));
+
+	//++++++++++++++ End:  Functional Outline shader and Freindly sprite for FriendlyBaseTank ++++++++++++++++++//
+	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 	TankPivot->SetupAttachment(RootComponent);
 	ForwardRightWheelSensor = CreateDefaultSubobject<USceneComponent>(TEXT("ForwardRight Wheel Sensor"));

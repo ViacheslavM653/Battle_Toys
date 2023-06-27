@@ -11,6 +11,7 @@ class UHealthComponent;
 class UNiagaraComponent;
 class UBoxComponent;
 class UOutlineMaterialComponent;
+class UWidgetComponent;
 
 UCLASS()
 class BATTLE_TOYS_API AFriendlyCharacterBaseTank : public ACharacter
@@ -37,7 +38,10 @@ protected:
     //++++++++++++++ Start:  Functional Outline shader and Freindly sprite for FriendlyBaseTank +++++++++++++++++//
 
     UPROPERTY(EditAnywhere, Category = "OutlineMaterial")
-        UOutlineMaterialComponent* OutlineMaterialComponent;
+        TObjectPtr<UOutlineMaterialComponent> OutlineMaterialComponent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FriendWidget")
+        TObjectPtr<UWidgetComponent> FriendWidget;
 
     //++++++++++++++ End:  Functional Outline shader and Freindly sprite for FriendlyBaseTank ++++++++++++++++++//
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
