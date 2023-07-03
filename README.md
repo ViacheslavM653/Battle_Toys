@@ -11,6 +11,6 @@ Third-person arcade game for Unreal Engine 5 made entirely in C++. This project 
 
 ### Gameplay
 
-To see the gameplay, you can download the finished build [Battle_Toys.7z](https://drive.google.com/file/d/1tUtMKHbuennz6_6ajOpWwrsA8z6q-WpH/view?usp=drive_link) or watch it here
+To see the gameplay, you can download the finished build [Battle_Toys.7z](https://drive.google.com/file/d/1tUtMKHbuennz6_6ajOpWwrsA8z6q-WpH/view?usp=drive_link) or watch it [here](https://youtu.be/p9NeDGpnF78).
 
 
