@@ -36,6 +36,9 @@ bld/
 #Binaries folder
 /Binaries
 /Intermediate
+/Content
+/Config
+/Saved
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
